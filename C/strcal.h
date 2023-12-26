@@ -82,7 +82,7 @@ char* absstr(char* n,char release){//Assign a function which removes the first '
 	return n0;//Return the result
 }
 char isnum(char* n){//Check is a string represents a number (standard (like 1) or non-standard (like 01.0))
-	if(!n||!strlen(n)||(strlen(n)<2&&!isWhole(n)))//(The string is NULL/empty, or if it's length is 1, it contains something other than digits)
+	if(!n||!strlen(n)||((n[0]<'0'||n[0]>'9')&&strlen(n)<2))//(The string is NULL/empty, or if it's length is 1, it contains something other than digits)
 		return 0;//Return 0 which indicates as false
 	char *n0=absstr(n,0);//Create a copy of the original string without the first '-' if it exists
 	if(strchr(n0,'-')){//(There's more than one '-')
@@ -137,7 +137,7 @@ void removeDecimals(char** x,char** y){//Assign a function which removes the '.'
 	else if(strchr(*x,'.')&&strchr(*y,'.')){//(Both strings have '.')
 		char swap=0;//Assign a variable which checks if the strings have been swapped
 		if(strlen(strchr(*x,'.'))<strlen(strchr(*y,'.')))//Swap the strings if the second string has more decimals than the first one (and save it)
-			swapstr(x,y),swap++;
+			swapstr(x,y),swap=1;
 		*y=mltstr(mltstr(fixnum(rmchr(*y,'.',0),1),"0",strlen(strchr(*x,'.'))-strlen(strchr(*y,'.')),2),*y,0,3),*x=fixnum(rmchr(*x,'.',1),1);//Remove decimals
 		if(swap)//Swap the strings back if they've been swapped before
 			swapstr(x,y);
@@ -177,7 +177,7 @@ char* subtractWhole(char* x,char* y,char release){//Assign a function which does
 		return strtmp("0",0);//Return a copy of "0"
 	}
 	char *x0=strtmp(x,release&2),*y0=strtmp(y,release&1),*answer=strtmp("",0),sign=cmpstr(x0,y0)>1?'-':0,subtract=0;//Assign copies of both strings, answer & sign character
-	if(sign=='-')//Swap if the second string is bigger than the first one
+	if(sign)//Swap if the second string is bigger than the first one
 		swapstr(&x0,&y0);
 	for(size_t i=strlen(x0);i--;)//Do the subtraction digit by digit
 		if(i<strlen(x0)-strlen(y0))
@@ -302,7 +302,7 @@ char* divideWhole(char* x,char* y,char option,char release){//(Same as the funct
 		return strtmp("0",0);//Return a copy of "0"
 	}
 	char *answer0=strtmp("",0),*answer1=strtmp(CHR2STR(x[0]),0);//Assign the answer & the remainder string
-	for(size_t i=strlen(x);i--;answer0=strappend(answer0,simpleWholeDivide(answer1,y,0,0),3),answer1=fixnum(strappend(simpleWholeDivide(answer1,y,1,2),CHR2STR(i?x[strlen(x)-i]:0),2),1));//Do the division digit by digit
+	for(size_t i=strlen(x);i--;answer0=fixnum(strappend(answer0,simpleWholeDivide(answer1,y,0,0),3),1),answer1=fixnum(strappend(simpleWholeDivide(answer1,y,1,2),CHR2STR(i?x[strlen(x)-i]:0),2),1));//Do the division digit by digit
 	if(release&2)//Free the first string if told to
 		free(x);
 	if(release&1)//Free the second string if told to
@@ -312,7 +312,7 @@ char* divideWhole(char* x,char* y,char option,char release){//(Same as the funct
 		return answer1;//Return the remainder
 	}
 	free(answer1);//Free the remainder string
-	return fixnum(answer0,1);//Return the answer
+	return answer0;//Return the answer
 }
 char* gcd(char* x,char* y,char release){//Assign a function which returns the greatest common divisor of 2 whole numbers as strings using the Euclidean algorithm
 	if(x[0]<'1'||y[0]<'1'){//(Either the first or the second string is "0")
@@ -328,7 +328,7 @@ char* gcd(char* x,char* y,char release){//Assign a function which returns the gr
 		return strtmp(x,release&2);//Return a copy of the first string and free the original one if told to
 	}
 	char *x0=strtmp(x,release&2),*y0=strtmp(y,release&1),*tmp;//Assign a copy of both strings and free the original ones if told to, and assign a temporary string
-	while(x0[strlen(x0)-1]<'0'&&y0[strlen(y0)-1]<'0')//Divide both copies by 10 until one of them is not divisable by 10
+	while(x0[strlen(x0)-1]<'1'&&y0[strlen(y0)-1]<'1')//Divide both copies by 10 until one of them is not divisable by 10
 		x0=strntmp(x0,strlen(x0)-1,1),y0=strntmp(y0,strlen(y0)-1,1);
 	while(x0[0]>'0'&&y0[0]>'0')//Continue finding remainders of both copies until one of them becomes "0"
 		tmp=divideWhole(x0,y0,1,0),y0=divideWhole(y0,x0,1,3),x0=strtmp(tmp,1);
@@ -368,7 +368,7 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 				for(size_t j=strlen(y0);j--;answer0=strappend(CHR2STR((add0+add1)%10+'0'),answer0,1),add0=(add0+add1)/10,add1=0)
 					for(char k=x0[i]-'0';k--;add1+=y0[j]-'0');
 			free(x0),free(y0);//Free both copies
-			return returnPoint(strappend(CHR2STR(sign),strappend(mltstr("","0",divide,0),answer,3),1),divide,1);//Return the result with the floating point & the sign back
+			return returnPoint(strappend(mltstr(CHR2STR(sign),"0",divide,0),answer,3),divide,1);//Return the result with the floating point & the sign back
 		case '%'://Find the remainder of a division
 			if(y0[0]<'1'&&strlen(y0)<2)//(The second string is "0")
 				break;//Break out of the switch-case statement
