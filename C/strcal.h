@@ -302,7 +302,7 @@ char* divideWhole(char* x,char* y,char option,char release){//(Same as the funct
 		return strtmp("0",0);//Return a copy of "0"
 	}
 	char *answer0=strtmp("",0),*answer1=strtmp(CHR2STR(x[0]),0);//Assign the answer & the remainder string
-	for(size_t i=strlen(x);i--;answer0=fixnum(strappend(answer0,simpleWholeDivide(answer1,y,0,0),3),1),answer1=fixnum(strappend(simpleWholeDivide(answer1,y,1,2),CHR2STR(i?x[strlen(x)-i]:0),2),1));//Do the division digit by digit
+	for(size_t i=strlen(x);i--;answer0=strappend(answer0,simpleWholeDivide(answer1,y,0,0),3),answer1=fixnum(strappend(simpleWholeDivide(answer1,y,1,2),CHR2STR(i?x[strlen(x)-i]:0),2),1));//Do the division digit by digit
 	if(release&2)//Free the first string if told to
 		free(x);
 	if(release&1)//Free the second string if told to
@@ -312,7 +312,7 @@ char* divideWhole(char* x,char* y,char option,char release){//(Same as the funct
 		return answer1;//Return the remainder
 	}
 	free(answer1);//Free the remainder string
-	return answer0;//Return the answer
+	return fixnum(answer0,1);//Return the answer
 }
 char* gcd(char* x,char* y,char release){//Assign a function which returns the greatest common divisor of 2 whole numbers as strings using the Euclidean algorithm
 	if(x[0]<'1'||y[0]<'1'){//(Either the first or the second string is "0")
