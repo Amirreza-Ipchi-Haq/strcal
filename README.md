@@ -6,13 +6,10 @@ This library is portable. It doesn't require installing and is independent from 
 ## The algorithm it uses
 This library uses the same method which is taught at elementary school on how to calculate big numbers (just a bit more advanced to improve speed). I've implemented it in different programming languages so a computer would be able to do that easily and quick (digit by digit).
 
-## Warning (For people who know how to use this library. You can learn it from the Wiki tab)
-This library's division takes a lot of time if the answer has a lot of decimals. This library is designed to show the full answer (and for numbers with repeating decimals, it shows which decimals are repeating. For example, `calculate("10","3",'/',0)` would return `"3.(3)"`). Also, the answers for addition, subtraction, multiplication and finding remainders can be re-used in the `calculate` function, but not always for division, because it might have repeating decimals, and there is still only support for integers & terminating decimals.
-
 ## The reason I've created this library (and why it's a library and not a program)
 I was calculating big numbers and saw that my small calculator wasn't able to show the full number, so I've decided to calculate it by hand when randomly this idea came into my head.
 
 The reason this is a library (and not a program) is that I didn't know what uses it could have. I've turned it into a library so others could use it too.
 
 ## Contact
-If you want me to add more features (e.g. more math operations), you can email me about it (My email is ipchia3@gmail.com. It is visible under my profile if you're signed in to GitHub).
+If you want me to add more features (e.g. more math operations) or you've found bugs, you can email me about it (My email is ipchia3@gmail.com. It is visible under my profile if you're signed in to GitHub).
