@@ -405,13 +405,12 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 							free(tmp);//Free the copy
 							goto finish;//Break out of the condition
 						}
-				}else{//(The division isn't divisible by 5)
+				}else//(The division isn't divisible by 5)
 					for(;(tmp[strlen(tmp)-1]-'0')%2<1;tmp=divideWhole(tmp,"2",0,2),x0=strappend(x0,"0",2),answer=strappend(answer,simpleWholeDivide(x0,y0,0,0),3),x0=simpleWholeDivide(x0,y0,1,2))//Continue the division digit by digit and divide the copy by 2 until it's not divisibla by 2
 						if(x0[0]<'1'){//(In case that the remainder becomes 0)
 							free(tmp);//Free the copy
 							goto finish;//Break out of the condition
 						}
-				}
 				if(tmp[0]=='1'&&strlen(tmp)<2){//(The answer has no repeating decimals)
 					free(tmp);//Free the copy
 					goto finish;//Break out of the condition
