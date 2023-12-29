@@ -250,39 +250,39 @@ namespace strcal{
 				num=n;//Initialize the number string
 				return;
 			}
-			bool isWhole_(){
-				return isWhole(num);
+			bool isWhole(){
+				return strcal::isWhole(num);
 			}
-			bool strExists_(std::string s){
-				return strExists(num,s);
+			bool strExists(std::string s){
+				return strcal::strExists(num,s);
 			}
-			std::string rmstr_(std::string s){
-				num=rmstr(num,s);
+			std::string rmstr(std::string s){
+				num=strcal::rmstr(num,s);
 				return num;
 			}
-			std::string absstr_(){
-				num=absstr(num);
+			std::string absstr(){
+				num=strcal::absstr(num);
 				return num;
 			}
-			bool isnum_(){
-				return isnum(num);
+			bool isnum(){
+				return strcal::isnum(num);
 			}
-			std::string fixnum_(){
-				num=fixnum(num);
+			std::string fixnum(){
+				num=strcal::fixnum(num);
 				return num;
 			}
-			std::string returnPoint_(size_t posFromRight){
-				num=returnPoint(num,posFromRight);
+			std::string returnPoint(size_t posFromRight){
+				num=strcal::returnPoint(num,posFromRight);
 				return num;
 			}
-			uint8_t cmpstr_(std::string s){
-				return cmpstr(num,s);
+			uint8_t cmpstr(std::string s){
+				return strcal::cmpstr(num,s);
 			}
-			std::string gcd_(std::string n){
-				return gcd(num,n);
+			std::string gcd(std::string n){
+				return strcal::gcd(num,n);
 			}
-			std::string calculate_(std::string n,char operation){
-				num=calculate(num,n,operation);
+			std::string calculate(std::string n,char operation){
+				num=strcal::calculate(num,n,operation);
 				return num;
 			}
 	};
