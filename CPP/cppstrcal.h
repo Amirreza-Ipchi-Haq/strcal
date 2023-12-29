@@ -97,7 +97,7 @@ namespace strcal{
 		return n<0?10+n%10:n%10;//Return the answer
 	}
 	std::string subtractWhole(std::string x,std::string y){//Assign a function which subtracts a whole number from another as strings
-		if(!cmpstr(x,y))//Return "0" if both numbers are equal
+		if(x==y)//Return "0" if both numbers are equal
 			return "0";
 		std::string answer;//Assign the answer string
 		char sign=cmpstr(x,y)>1,subtract=0;//Assign the sign indicator (which is 1 (true) if the second string is bigger)
@@ -124,7 +124,7 @@ namespace strcal{
 			return std::string(1,(x.back()-'0')%(y[0]-'0')+'0');
 		if(option&&y[0]=='1'&&fixnum(y.substr(1,-1))=="0")//Return the second first string's last characters with the number of '0's of the second string, or if the second string is bigger than the first one, return the first string, if the function asks for the remainder and the second string is a power of 10
 			return x.size()<y.size()?x:x.substr(x.size()-y.size()+1,-1);
-		if(!cmpstr(x,y))//(Both strings are equal)
+		if(x==y)//(Both strings are equal)
 			return option?"0":"1";//Return "0" if the function asks for the remainder, unless, return "1"
 		if(cmpstr(x,y)>1)//(The second string is bigger)
 			return option?x:"0";//Return the first string if the function asks for the remainder, unless, return "0"
@@ -147,7 +147,7 @@ namespace strcal{
 			return std::string(1,(x.back()-'0')%(y[0]-'0')+'0');
 		if(option&&y[0]=='1'&&fixnum(y.substr(1,-1))=="0")//Return the second first string's last characters with the number of '0's of the second string, or if the second string is bigger than the first one, return the first string, if the function asks for the remainder and the second string is a power of 10
 			return x.size()<y.size()?x:x.substr(x.size()-y.size()+1,-1);
-		if(!cmpstr(x,y))//(Both strings are equal)
+		if(x==y)//(Both strings are equal)
 			return option?"0":"1";//Return "0" if the function asks for the remainder, unless, return "1"
 		if(cmpstr(x,y)>1)//(The second string is bigger)
 			return option?x:"0";//Return the first string if the function asks for the remainder, unless, return "0"
@@ -158,7 +158,7 @@ namespace strcal{
 	std::string gcd(std::string x,std::string y){//Assign a function which finds the greatest common divisor between 2 natural numbers as strings using the Euclidean algorithm
 		if(x=="0"||y=="0")//Return an empty string if either one of the strings is "0"
 			return "";
-		if(!cmpstr(x,y))//Return the first string if both strings are equal
+		if(x==y)//Return the first string if both strings are equal
 			return x;
 		std::string tmp;//Assign a temporary string
 		while(x.back()<'1'&&y.back()<'1')//Remove the common factor 10 from both strings
@@ -207,7 +207,7 @@ namespace strcal{
 					break;
 				if(x=="0")//Return "0" if the first string has the same value
 					return "0";
-				if(!cmpstr(x,y))//Return "1" if both strings are equal
+				if(x==y)//Return "1" if both strings are equal
 					return "1";
 				removeDecimals(x,y),x=absstr(x),y=absstr(y);//Turn both strings into whole numbers
 				{//(Has local variables
@@ -231,7 +231,7 @@ namespace strcal{
 								goto finish;
 					if(tmp=="1")//Skip to the returning if the temporary string is "1"
 						goto finish;
-					for(tmp=x,x=x+"0",answer=answer+"("+simpleWholeDivide(x,y,0),x=simpleWholeDivide(x,y,1);cmpstr(x,tmp);x=x+"0",answer=answer+simpleWholeDivide(x,y,0),x=simpleWholeDivide(x,y,1))//Store the current remainder in the temporary string, append "(" to the answer string and continue the division digit by digit until the current remainder is the same as the stored one
+					for(tmp=x,x=x+"0",answer=answer+"("+simpleWholeDivide(x,y,0),x=simpleWholeDivide(x,y,1);x!=tmp;x=x+"0",answer=answer+simpleWholeDivide(x,y,0),x=simpleWholeDivide(x,y,1))//Store the current remainder in the temporary string, append "(" to the answer string and continue the division digit by digit until the current remainder is the same as the stored one
 						if(x=="0"){//Remove the '(' from the answer string and skip to the returning if the remainder is "0"
 							answer=rmstr(answer,"(");//(Removement part)
 							goto finish;//(Skipping part)
