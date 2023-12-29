@@ -361,9 +361,7 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 			return returnPoint(answer,divide,1);//Return the result with the floating point back
 		case '*'://Do the multiplication
 			char *answer0=strtmp("",0),add0=0,add1=0,sign=(x0[0]=='-')^(y0[0]=='-')?'-':0;//Assign the answer, the first addition variable, a the second addition variable & the sign character
-			x0=fixnum(rmchr(absstr(x0,1),'.',1),1),y0=fixnum(rmchr(absstr(y0,1),'.',1),1);//Turn the number strings into whole number stringss
-			if(strlen(x0)>strlen(y0))//Swap if the first string has more characters than the second string
-				swapstr(&x0,&y0);
+			x0=fixnum(rmchr(absstr(x0,1),'.',1),1),y0=fixnum(rmchr(absstr(y0,1),'.',1),1);//Turn the number strings into whole number strings
 			for(size_t i=strlen(x0);i--;answer=addWhole(answer,strappend(add0?CHR2STR(add0+'0'):"",answer0,1),3),add0=0,answer0=mltstr("","0",strlen(x0)-i,0))//Do the multiplication digit by digit
 				for(size_t j=strlen(y0);j--;answer0=strappend(CHR2STR((add0+add1)%10+'0'),answer0,1),add0=(add0+add1)/10,add1=0)
 					for(char k=x0[i]-'0';k--;add1+=y0[j]-'0');
