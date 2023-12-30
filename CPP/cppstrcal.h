@@ -196,11 +196,12 @@ namespace strcal{
 			case '*'://Do the multiplication
 				if(x=="0"||y=="0")//Return "0" if one of the strings has the same value
 					return "0";
-				if(x=="1"||y=="1")//(One of the strings is "1")
+				if(x=="1"||y=="1"){//(One of the strings is "1")
 					if(x=="1")//Return the second string if the first string is "1"
 						return y;
 					else//Return the second string if not
 						return x;
+				}
 				{//(Has local variables)
 					std::string answer0;//Assign the sub-answer string
 					char add0=0,add1=0,sign=(x[0]=='-')^(y[0]=='-');//Assign the first addition variable, the second addition variable & the sign indicator
