@@ -1,3 +1,5 @@
+#ifndef _CSTRCAL_H_
+#define _CSTRCAL_H_
 #include<stdlib.h>
 #include<string.h>
 #define CHR2STR(c) (char[2]){c,0}//Assign a character-to-string function
@@ -427,3 +429,4 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 	free(x0),free(y0),free(answer);//Free every array which was allocated in the heap
 	return 0;//Return NULL (because the division was dividing by 0 which is undefined)
 }
+#endif
