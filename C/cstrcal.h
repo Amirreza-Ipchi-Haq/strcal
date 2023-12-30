@@ -147,6 +147,11 @@ void removeDecimals(char** x,char** y){//Assign a function which removes the '.'
 	return;
 }
 char* addWhole(char* x,char* y,char release){//Assign a function which does addition to 2 whole number strings
+	if(y[0]=='0'){//(The second string is "0")
+		if(release&1)//Free the second string if told to
+			free(y);
+		return strtmp(x,release&2)//Return a copy of the first string and free the original one if told to
+	}
 	char *x0=strtmp(x,release&2),*y0=strtmp(y,release&1),*answer=strtmp("",0),add=0;//Create copies of both strings (and freeing the original ones if told to) and assign the answer string
 	if(strlen(x0)<strlen(y0))//Swap the copies if the second string has more characters than the first one
 		swapstr(&x0,&y0);
@@ -177,6 +182,11 @@ char* subtractWhole(char* x,char* y,char release){//Assign a function which does
 		if(release&1)//Free the second string if told to
 			free(y);
 		return strtmp("0",0);//Return a copy of "0"
+	}
+	if(y[0]=='0'){//(The second string is "0")
+		if(release&1)//Free the second string if told to
+			free(y);
+		return strtmp(x,release&2)//Return a copy of the first string and free the original one if told to
 	}
 	char *x0=strtmp(x,release&2),*y0=strtmp(y,release&1),*answer=strtmp("",0),sign=cmpstr(x0,y0)>1?'-':0,subtract=0;//Assign copies of both strings, answer & sign character
 	if(sign)//Swap if the second string is bigger than the first one
@@ -352,7 +362,7 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 			else if(x0[0]!='-'&&y0[0]=='-')//(The first string is negative, and the second string isn't)
 				answer=subtractWhole(strtmp(x0,1),absstr(y0,1),3);//Subtract the strings by their absolute value
 			else//(Both strings are either negative or non-negative)
-				answer=strappend(x0[0]=='-'?"-":"",addWhole(absstr(x0,1),absstr(y0,1),3),1);//Do the addition with the strings' absolute values, and put the sign if both are negative
+				answer=strappend(x0[0]=='-'?"-":"",addWhole(absstr(x0,0),absstr(y0,1),3),1),free(x0);//Do the addition with the strings' absolute values, and put the sign if both are negative
 			return returnPoint(answer,divide,1);//Return the result with the floating point back
 		case '-'://Do the subtraction
 			removeDecimals(&x0,&y0);//Remove the floating point from both strings
@@ -362,12 +372,26 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 				answer=strappend(x0[0]=='-'?"-":"",subtractWhole(absstr(x0,0),absstr(y0,1),3),1),free(x0),answer=answer[1]=='-'?strchr(answer,answer[2]):answer;//Subtract the strings by their absolute value, and if the answer has 2 '-', remove both of them
 			return returnPoint(answer,divide,1);//Return the result with the floating point back
 		case '*'://Do the multiplication
-			char *answer0=strtmp("",0),add0=0,add1=0,sign=(x0[0]=='-')^(y0[0]=='-')?'-':0;//Assign the answer, the first addition variable, a the second addition variable & the sign character
+			if((x0[0]=='0'&&strlen(x0)<2)||(y0[0]=='0'&&strlen(y0)<2)){//(One of the strings is "0")
+				free(x0),free(y0),free(answer);//Free every string
+				return strtmp("0",0);//Return a copy of "0"
+			}
+			if((x0[0]=='1'&&strlen(x0)<2)||(y0[0]=='1'&&strlen(y0)<2)){//(One of the strings is "1")
+				free(answer);//Free the answer string
+				if(x0[0]=='1'&&strlen(x0)<2){//(The first string is "1" (This doesn't say the other one isn't))
+					free(x0);//Free the first string
+					return strtmp(y0,1);//Return a copy of the second string and free the original one
+				}else{//(The first string isn't "1" but the second string is)
+					free(y0);//Free the second string
+					return strtmp(x0,1);//Return a copy of the first string and free the original one
+				}
+			}
+			char *answer0=strtmp("",0),add0=0,add1=0,sign=(x0[0]=='-')^(y0[0]=='-')?'-':0;//Assign the sub-answer, the first addition variable, a the second addition variable & the sign character
 			x0=fixnum(rmchr(absstr(x0,1),'.',1),1),y0=fixnum(rmchr(absstr(y0,1),'.',1),1);//Turn the number strings into whole number strings
 			for(size_t i=strlen(x0);i--;answer=addWhole(answer,strappend(add0?CHR2STR(add0+'0'):"",answer0,1),3),add0=0,answer0=mltstr("","0",strlen(x0)-i,0))//Do the multiplication digit by digit
 				for(size_t j=strlen(y0);j--;answer0=strappend(CHR2STR((add0+add1)%10+'0'),answer0,1),add0=(add0+add1)/10,add1=0)
 					for(char k=x0[i]-'0';k--;add1+=y0[j]-'0');
-			free(x0),free(y0);//Free both copies
+			free(x0),free(y0),free(answer0);//Free both copies and the sub-answer
 			return returnPoint(strappend(mltstr(CHR2STR(sign),"0",divide,0),answer,3),divide,1);//Return the result with the floating point & the sign back
 		case '%'://Find the remainder of a division
 			if(y0[0]<'1'&&strlen(y0)<2)//(The second string is "0")
