@@ -181,22 +181,22 @@ char cmpstr(char* a,char *b){//Assign a function which compares 2 strings by the
 	return 0;//Return 0 indicating that both strings are equal
 }
 char* subtractWhole(char* x,char* y,char release){//Assign a function which does subtraction to 2 whole number strings
-	if(!cmpstr(x,y)){//(Both numbers are equal)
-		if(release&2)//Free the first string if told to
-			free(x);
+	if(y[0]=='0'){//(The second string is "0")
 		if(release&1)//Free the second string if told to
 			free(y);
-		return strtmp("0",0);//Return a copy of "0"
+		return strtmp(x,release&2)//Return a copy of the first string and free the original one if told to
 	}
 	if(x[0]=='0'){//(The first string is "0")
 		if(release&2)//Free the first string if told to
 			free(x);
 		return strappend("-",y,release&1)//Return a copy of the second string with '-' at the left and free the original one if told to
 	}
-	if(y[0]=='0'){//(The second string is "0")
+	if(!cmpstr(x,y)){//(Both numbers are equal)
+		if(release&2)//Free the first string if told to
+			free(x);
 		if(release&1)//Free the second string if told to
 			free(y);
-		return strtmp(x,release&2)//Return a copy of the first string and free the original one if told to
+		return strtmp("0",0);//Return a copy of "0"
 	}
 	char *x0=strtmp(x,release&2),*y0=strtmp(y,release&1),*answer=strtmp("",0),sign=cmpstr(x0,y0)>1?'-':0,subtract=0;//Assign copies of both strings, answer & sign character
 	if(sign)//Swap if the second string is bigger than the first one
