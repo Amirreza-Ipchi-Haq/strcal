@@ -103,12 +103,12 @@ namespace strcal{
 		return n<0?10+n%10:n%10;//Return the answer
 	}
 	std::string subtractWhole(std::string x,std::string y){//Assign a function which subtracts a whole number from another as strings
-		if(x==y)//Return "0" if both numbers are equal
-			return "0";
-		if(x=="0")//Return the second string with '-' at the left if the first string is "0"
-			return "-"+y;
 		if(y=="0")//Return the first string if the second string is "0"
 			return x;
+		if(x=="0")//Return the second string with '-' at the left if the first string is "0"
+			return "-"+y;
+		if(x==y)//Return "0" if both numbers are equal
+			return "0";
 		std::string answer;//Assign the answer string
 		char sign=cmpstr(x,y)>1,subtract=0;//Assign the sign indicator (which is 1 (true) if the second string is bigger)
 		if(sign)//Swap both strings if the sign indicator represents true
