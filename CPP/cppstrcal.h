@@ -72,6 +72,8 @@ namespace strcal{
 		return;
 	}
 	std::string addWhole(std::string x,std::string y){//Assign a function which adds 2 whole numbers as a string
+		if(x=="0")//Return the first string if the first string is "0"
+			return y;
 		if(y=="0")//Return the first string if the second string is "0"
 			return x;
 		std::string answer;//Assing the answer string
@@ -103,6 +105,8 @@ namespace strcal{
 	std::string subtractWhole(std::string x,std::string y){//Assign a function which subtracts a whole number from another as strings
 		if(x==y)//Return "0" if both numbers are equal
 			return "0";
+		if(x=="0")//Return the second string with '-' at the left if the first string is "0"
+			return "-"+y;
 		if(y=="0")//Return the first string if the second string is "0"
 			return x;
 		std::string answer;//Assign the answer string
