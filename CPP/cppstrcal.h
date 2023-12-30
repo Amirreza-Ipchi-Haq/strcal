@@ -44,7 +44,7 @@ namespace strcal{
 			return n;
 		char sign=n[0]=='-';//Assign the sign variable
 		n=absstr(n);//Turn the number into it's absolute form
-		while(strExists(n,".")?n.find('.')-1:n.size()>1&&n[0]=='0')//Remove the '0's at the left
+		while((strExists(n,".")?n.find('.')-1:n.size())>1&&n[0]=='0')//Remove the '0's at the left
 			n.erase(0,1);
 		if(strExists(n,"."))//(The string contains '.')
 			while(n.back()=='0'||n.back()=='.')//Remove the '0's at the right
