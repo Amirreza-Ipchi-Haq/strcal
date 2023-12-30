@@ -147,6 +147,11 @@ void removeDecimals(char** x,char** y){//Assign a function which removes the '.'
 	return;
 }
 char* addWhole(char* x,char* y,char release){//Assign a function which does addition to 2 whole number strings
+	if(x[0]=='0'){//(The first string is "0")
+		if(release&2)//Free the first string if told to
+			free(y);
+		return strtmp(x,release&1)//Return a copy of the second string and free the original one if told to
+	}
 	if(y[0]=='0'){//(The second string is "0")
 		if(release&1)//Free the second string if told to
 			free(y);
@@ -182,6 +187,11 @@ char* subtractWhole(char* x,char* y,char release){//Assign a function which does
 		if(release&1)//Free the second string if told to
 			free(y);
 		return strtmp("0",0);//Return a copy of "0"
+	}
+	if(x[0]=='0'){//(The first string is "0")
+		if(release&2)//Free the first string if told to
+			free(x);
+		return strappend("-",y,release&1)//Return a copy of the second string with '-' at the left and free the original one if told to
 	}
 	if(y[0]=='0'){//(The second string is "0")
 		if(release&1)//Free the second string if told to
