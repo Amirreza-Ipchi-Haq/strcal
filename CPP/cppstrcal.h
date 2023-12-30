@@ -1,3 +1,5 @@
+#ifndef CPPSTRCAL_H
+#define CPPSTRCAL_H
 #include<string>
 namespace strcal{
 	bool isWhole(std::string n){//Assign a function which checks if a string contains digits only
@@ -287,3 +289,4 @@ namespace strcal{
 			}
 	};
 }
+#endif
