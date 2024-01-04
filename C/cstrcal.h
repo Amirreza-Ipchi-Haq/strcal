@@ -408,7 +408,7 @@ char* calculate(char* x,char* y,const char operation,const char release){//Assig
 		case '%'://Find the remainder of a division
 			if(y0[0]<'1'&&strlen(y0)<2)//(The second string is "0")
 				break;//Break out of the switch-case statement
-			removeDecimals(&x0,&y0),answer=returnPoint(strappend((x0[0]=='-')^(y0[0]=='-')?"-":"",divideWhole(absstr(x0,0),absstr(y0,0),1,3),1),divide,1),free(x0),free(y0);//Turn the number strings into whole number strings, and find the answer with the floating point back
+			removeDecimals(&x0,&y0),answer=returnPoint(strappend(x0[0]=='-'?"-":"",divideWhole(absstr(x0,0),absstr(y0,1),1,3),1),divide,1),free(x0);//Turn the number strings into whole number strings, and find the answer with the floating point back
 			return answer;//Return the result
 		case '/'://Do the division
 			if(y0[0]<'1'&&strlen(y0)<2)//(The second string is "0")
