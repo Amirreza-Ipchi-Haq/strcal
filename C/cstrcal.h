@@ -4,7 +4,7 @@
 #include<string.h>
 #define CHR2STR(c) (char[2]){c,0}//Assign a character-to-string function
 #define MOD10(n) (char)(n<0?10+n%10:n%10)//Assign a function which finds `n mod 10`
-char* strtmp(char* s,char release){//Assign a function which creates a temporary string (Same as `strdup` with memory management included)
+char* strtmp(char* s,const char release){//Assign a function which creates a temporary string (Same as `strdup` with memory management included)
 	if(!s)//(The string is NULL)
 		return s;//Return NULL
 	char *s0=malloc((strlen(s)+1)*sizeof(char));//Allocate memory as much as the length of the string (until NUL) plus one more byte for NUL
@@ -13,7 +13,7 @@ char* strtmp(char* s,char release){//Assign a function which creates a temporary
 		free(s);
 	return s0;//Return a pointer to the array allocated in the heap
 }
-char* strntmp(char* s,size_t len,char release){//(Same as the function above with a character limit from the left)
+char* strntmp(char* s,size_t len,const char release){//(Same as the function above with a character limit from the left)
 	if(!s)//(The string is NULL)
 		return 0;//Return NULL
 	if(!len){//(The number of characters to be copied is 0)
@@ -31,7 +31,7 @@ char* strntmp(char* s,size_t len,char release){//(Same as the function above wit
 		free(s);
 	return strtmp(s0,0);//Return a copy of the character array
 }
-char* strnrtmp(char* s,size_t len,char release){//(Same as the function above with the limit starting from the right)
+char* strnrtmp(char* s,size_t len,const char release){//(Same as the function above with the limit starting from the right)
 	if(!s)//(The string is NULL)
 		return 0;//Return NULL
 	if(!len){//(The number of characters to be copied is 0)
@@ -48,7 +48,7 @@ char* strnrtmp(char* s,size_t len,char release){//(Same as the function above wi
 		free(s);
 	return strtmp(s0,0);//Return a copy of the character array
 }
-char* strappend(char* s0,char* s1,char release){//Assign a function which sticks 2 strings together and returns the result
+char* strappend(char* s0,char* s1,const char release){//Assign a function which sticks 2 strings together and returns the result
 	char s[strlen(s0)+strlen(s1)+1];//Create a char array as much as the sum of both string's length until NUL plus one more index for NUL
 	strcat(strcpy(s,s0),s1);//Copy both string content into the character array
 	if(release&2)//Free the first string if told to
@@ -57,13 +57,15 @@ char* strappend(char* s0,char* s1,char release){//Assign a function which sticks
 		free(s1);
 	return strtmp(s,0);//Return a copy of the character array
 }
-char isWhole(char* n){//Assign a function which checks if a string only contains digits
+char isWhole(const char* n){//Assign a function which checks if a string only contains digits
+	if(n||!strlen(n))//Return 0 which indicates as false if the string is NULL or the string length is 0
+		return 0;
 	for(size_t i=strlen(n);i--;)//Check every index
 		if(n[i]<'0'||n[i]>'9')//(The current index contains something other than digits)
 			return 0;//Return 0 which indicates as false
 	return 1;//Return 1 which indicates as true
 }
-char* mltstr(char* s0,char* s1,size_t n,char release){//Assign a function which "multiplies" the second string and appends it to the first one
+char* mltstr(char* s0,char* s1,size_t n,const char release){//Assign a function which "multiplies" the second string and appends it to the first one
 	char *s=strtmp(s0,release&2);//Create a copy of the first string an free the first string if told to
 	while(n--)//Append the second string to the copy `n` times which `n` is initialized while calling the function
 		s=strappend(s,s1,2);
@@ -71,20 +73,20 @@ char* mltstr(char* s0,char* s1,size_t n,char release){//Assign a function which 
 		free(s1);
 	return s;//Return the copy
 }
-char* rmchr(char* n,char c,char release){//Assign a function which removes a character completely from a string
+char* rmchr(char* n,char c,const char release){//Assign a function which removes a character completely from a string
 	char *n0=strtmp(n,release);//Create a copy of the string and free the original one if told to
 	while(strchr(n0,c))//Remove the assigned character from the string until it doesn't exist in it
 		n0=mltstr(strappend(strntmp(n0,strlen(n0)-strlen(strchr(n0,c)),0),strchr(strchr(n0,c),strchr(n0,c)[1]),2),n0,0,3);
 	return n0;//Return the result
 }
-char* absstr(char* n,char release){//Assign a function which removes the first '-' if it exists from a string
+char* absstr(char* n,const char release){//Assign a function which removes the first '-' if it exists from a string
 	char *n0=n[0]=='-'?strtmp(strchr(n,n[1]),0):strtmp(n,0);//Create a copy of the original string without the first '-' if it exists
 	if(release)//Free the original string if told to
 		free(n);
 	return n0;//Return the result
 }
 char isnum(char* n){//Check is a string represents a number (standard (like 1) or non-standard (like 01.0))
-	if(!n||!strlen(n)||((n[0]<'0'||n[0]>'9')&&strlen(n)<2))//(The string is NULL/empty, or if it's length is 1, it contains something other than digits)
+	if(!n||(strlen(n)<2&&!isWhole(n)))//(The string is NULL/empty, or if it's length is 1, it contains something other than digits)
 		return 0;//Return 0 which indicates as false
 	char *n0=absstr(n,0);//Create a copy of the original string without the first '-' if it exists
 	if(strchr(n0,'-')){//(There's more than one '-')
@@ -105,7 +107,7 @@ char isnum(char* n){//Check is a string represents a number (standard (like 1) o
 	free(n0);//Free the copy
 	return 0;//Return 0 which indicates as false (because the condition above was false)
 }
-char* fixnum(char* n,char release){//Assign a function which turns the numbers in their standard form in form of string
+char* fixnum(char* n,const char release){//Assign a function which turns the numbers in their standard form in form of string
 	if(strlen(n)<2)//(The string only contains 1 character, so it's definitely in the standard form)
 		return strtmp(n,release);//Return a copy of the string and free the original one if told to
 	char sign=(n[0]=='-'?'-':0),*n0=absstr(n,release);//Save the sign of the number and turn the number into its absolute form
@@ -113,7 +115,11 @@ char* fixnum(char* n,char release){//Assign a function which turns the numbers i
 		n0=strnrtmp(n0,strlen(n0)-1,1);
 	if(strchr(n0,'.')){//(The number has a floating point)
 		while(n0[strlen(n0)-1]=='0'||n0[strlen(n0)-1]=='.')//Remove the zeros from the right
-			n0=strntmp(n0,strlen(n0)-1,1);
+			if(n0[strlen(n0)-1]=='.'){//Terminate removal if the last character is '.'
+				n0=strntmp(n0,strlen(n0)-1,1);
+				break;
+			}else//Continue the removal
+				n0=strntmp(n0,strlen(n0)-1,1);
 	}
 	return n0[0]<'1'&&strlen(n0)<2?strtmp("0",0):strappend(CHR2STR(sign),n0,1);//Return the result, or if the result is "0", return a copy of "0" (so it wouldn't return "-0")
 }
@@ -122,10 +128,11 @@ void swapstr(char** a,char** b){//Assign a function which swaps 2 strings alloca
 	*a=strtmp(*b,1),*b=strtmp(tmp,1);//Swap values and free the copy after it
 	return;
 }
-char* returnPoint(char* n,size_t posFromRight,char release){//Assign a function which returns the '.' to an integer string
+char* returnPoint(char* n,const size_t posFromRight,const char release){//Assign a function which returns the '.' to an integer string
 	if(!posFromRight)//Cancel the purpose of the function if `posFromRight` is zero
 		return strtmp(n,release);//Return a copy of the string and free the original one if told to
-	char *result=posFromRight<strlen(absstr(n,0))?"":"0",sign=n[0]=='-'?'-':0;//Assign variables
+	char *tmp=absstr(n,0),*result=posFromRight<strlen(tmp)?"":"0",sign=n[0]=='-'?'-':0;//Assign variables
+	free(tmp);//Free the temporary string
 	for(size_t i=sign=='-';i<strlen(n);result=strappend(result,i==strlen(n)-posFromRight?strappend(".",CHR2STR(n[i]),0):CHR2STR(n[i]),0),i++);//Return the '.' to the whole number
 	if(release)//Free the string if told to
 		free(n);
@@ -137,25 +144,25 @@ void removeDecimals(char** x,char** y){//Assign a function which removes the '.'
 	else if(!strchr(*x,'.')&&strchr(*y,'.'))//(The second string has '.' while the first string hasn't)
 		*x=fixnum(mltstr(*x,"0",strlen(strchr(*y,'.'))-1,2),1),*y=fixnum(rmchr(*y,'.',1),1);
 	else if(strchr(*x,'.')&&strchr(*y,'.')){//(Both strings have '.')
-		char swap=0;//Assign a variable which checks if the strings have been swapped
-		if(strlen(strchr(*x,'.'))<strlen(strchr(*y,'.')))//Swap the strings if the second string has more decimals than the first one (and save it)
-			swapstr(x,y),swap=1;
+		const char swap=strlen(strchr(*x,'.'))<strlen(strchr(*y,'.'));//Assign a variable which checks if the strings needs to be swapped
+		if(swap)//Swap the strings if the second string has more decimals than the first one (and save it)
+			swapstr(x,y);
 		*y=mltstr(mltstr(fixnum(rmchr(*y,'.',0),1),"0",strlen(strchr(*x,'.'))-strlen(strchr(*y,'.')),2),*y,0,3),*x=fixnum(rmchr(*x,'.',1),1);//Remove decimals
 		if(swap)//Swap the strings back if they've been swapped before
 			swapstr(x,y);
 	}
 	return;
 }
-char* addWhole(char* x,char* y,char release){//Assign a function which does addition to 2 whole number strings
+char* addWhole(char* x,char* y,const char release){//Assign a function which does addition to 2 whole number strings
 	if(x[0]=='0'){//(The first string is "0")
 		if(release&2)//Free the first string if told to
 			free(y);
-		return strtmp(x,release&1)//Return a copy of the second string and free the original one if told to
+		return strtmp(x,release&1);//Return a copy of the second string and free the original one if told to
 	}
 	if(y[0]=='0'){//(The second string is "0")
 		if(release&1)//Free the second string if told to
 			free(y);
-		return strtmp(x,release&2)//Return a copy of the first string and free the original one if told to
+		return strtmp(x,release&2);//Return a copy of the first string and free the original one if told to
 	}
 	char *x0=strtmp(x,release&2),*y0=strtmp(y,release&1),*answer=strtmp("",0),add=0;//Create copies of both strings (and freeing the original ones if told to) and assign the answer string
 	if(strlen(x0)<strlen(y0))//Swap the copies if the second string has more characters than the first one
@@ -169,27 +176,23 @@ char* addWhole(char* x,char* y,char release){//Assign a function which does addi
 	return strappend(add?"1":"",answer,1);//Return the result
 }
 char cmpstr(char* a,char *b){//Assign a function which compares 2 strings by their value (Same as `strcmp` with some differences such as return type)
-	if(strlen(a)>strlen(b))//(The length of the first string is more than the second string)
-		return 1;//Return 1 indicating that the first string is bigger
-	if(strlen(a)<strlen(b))//(The length of the first string is less than the second string)
-		return 2;//Return 2 indicating that the second string is bigger
+	if(strlen(a)!=strlen(b))//(The strings' lengths differ from each other)
+		return 1+(strlen(a)<strlen(b));//Return 1 if the first string is larger, unless, return 2
 	for(size_t i=0;i<strlen(a);i++)//Compare both strings'content values if they have the same length
-		if(a[i]>b[i])//(The character of the current index of the first string is bigger than the character of the current index of the second string)
-			return 1;//Return 1 indicating that the first string is bigger
-		else if(a[i]<b[i])//(The character of the current index of the first string is smaller than the character of the current index of the second string)
-			return 2;//Return 2 indicating that the second string is bigger
+		if(a[i]!=b[i])//(The character of the current index differ)
+			return 1+(a[i]<b[i]);//Return 1 if the current index character of the first string is bigger than the one in the second string, unless, return 2
 	return 0;//Return 0 indicating that both strings are equal
 }
-char* subtractWhole(char* x,char* y,char release){//Assign a function which does subtraction to 2 whole number strings
+char* subtractWhole(char* x,char* y,const char release){//Assign a function which does subtraction to 2 whole number strings
 	if(y[0]=='0'){//(The second string is "0")
 		if(release&1)//Free the second string if told to
 			free(y);
-		return strtmp(x,release&2)//Return a copy of the first string and free the original one if told to
+		return strtmp(x,release&2);//Return a copy of the first string and free the original one if told to
 	}
 	if(x[0]=='0'){//(The first string is "0")
 		if(release&2)//Free the first string if told to
 			free(x);
-		return strappend("-",y,release&1)//Return a copy of the second string with '-' at the left and free the original one if told to
+		return strappend("-",y,release&1);//Return a copy of the second string with '-' at the left and free the original one if told to
 	}
 	if(!cmpstr(x,y)){//(Both numbers are equal)
 		if(release&2)//Free the first string if told to
@@ -203,13 +206,13 @@ char* subtractWhole(char* x,char* y,char release){//Assign a function which does
 		swapstr(&x0,&y0);
 	for(size_t i=strlen(x0);i--;)//Do the subtraction digit by digit
 		if(i<strlen(x0)-strlen(y0))
-			answer=strappend(CHR2STR(MOD10(x0[i]-'0'-subtract)+'0'),answer,1),subtract=x0[i]-'0'-subtract<0?1:0;
+			answer=strappend(CHR2STR(MOD10(x0[i]-'0'-subtract)+'0'),answer,1),subtract=x0[i]-'0'-subtract<0;
 		else
-			answer=strappend(CHR2STR(MOD10(x0[i]-y0[i-(strlen(x0)-strlen(y0))]-subtract)+'0'),answer,1),subtract=x0[i]-y0[i-(strlen(x0)-strlen(y0))]-subtract<0?1:0;
+			answer=strappend(CHR2STR(MOD10(x0[i]-y0[i-(strlen(x0)-strlen(y0))]-subtract)+'0'),answer,1),subtract=x0[i]-y0[i-(strlen(x0)-strlen(y0))]-subtract<0;
 	free(x0),free(y0);//Free the copies
 	return strappend(CHR2STR(sign),fixnum(answer,1),1);//Return the result with the sign back
 }
-char* simpleWholeDivide(char* x,char* y,char option,char release){//Assign a function which does division to 2 whole number strings in a simple way (useful if x/y<10)
+char* simpleWholeDivide(char* x,char* y,const char option,const char release){//Assign a function which does division to 2 whole number strings in a simple way (useful if x/y<10)
 	if(y[0]<'1'){//(The second string is "0")
 		if(release&2)//Free the first string if told to
 			free(x);
@@ -272,7 +275,7 @@ char* simpleWholeDivide(char* x,char* y,char option,char release){//Assign a fun
 	free(answer1);//Free the remainder string
 	return answer0;//Return the answer
 }
-char* divideWhole(char* x,char* y,char option,char release){//(Same as the function above with speed improvements (Uses the function above))
+char* divideWhole(char* x,char* y,const char option,const char release){//(Same as the function above with speed improvements (Uses the function above))
 	if(y[0]<'1'){//(The second string is "0")
 		if(release&2)//Free the first string if told to
 			free(x);
@@ -336,7 +339,7 @@ char* divideWhole(char* x,char* y,char option,char release){//(Same as the funct
 	free(answer1);//Free the remainder string
 	return fixnum(answer0,1);//Return the answer
 }
-char* gcd(char* x,char* y,char release){//Assign a function which returns the greatest common divisor of 2 whole numbers as strings using the Euclidean algorithm
+char* gcd(char* x,char* y,const char release){//Assign a function which returns the greatest common divisor of 2 whole numbers as strings using the Euclidean algorithm
 	if(x[0]<'1'||y[0]<'1'){//(Either the first or the second string is "0")
 		if(release&2)//Free the first string if told to
 			free(x);
@@ -361,9 +364,9 @@ char* gcd(char* x,char* y,char release){//Assign a function which returns the gr
 	free(y0);//Free the second copy
 	return x0;//Return the first copy
 }
-char* calculate(char* x,char* y,char operation,char release){//Assign the main function which calculates strings by the main programming operators as if they were numbers
+char* calculate(char* x,char* y,const char operation,const char release){//Assign the main function which calculates strings by the main programming operators as if they were numbers
 	char *x0=strtmp(x,release&2),*y0=strtmp(y,release&1),*answer=strtmp(operation=='*'?"0":operation=='/'?(x0[0]=='-')^(y0[0]=='-')?"-":"":0,0);//Assign a copy of both strings and free them if told to, and the answer
-	size_t divide=operation=='+'||operation=='-'||operation=='*'||operation=='%'?!strchr(x0,'.')&&!strchr(y0,'.')?0:strchr(x0,'.')&&!strchr(y0,'.')?strlen(strchr(x0,'.'))-1:!strchr(x0,'.')&&strchr(y0,'.')?strlen(strchr(y0,'.'))-1:operation=='*'?strlen(strchr(x0,'.'))+strlen(strchr(y0,'.'))-2:strlen(strchr(x0,'.'))>strlen(strchr(y0,'.'))?strlen(strchr(x0,'.'))-1:strlen(strchr(y0,'.'))-1:0;//Assign the number used for division (useless if `operation` (The operator) is '/')
+	const size_t divide=operation=='+'||operation=='-'||operation=='*'||operation=='%'?!strchr(x0,'.')&&!strchr(y0,'.')?0:strchr(x0,'.')&&!strchr(y0,'.')?strlen(strchr(x0,'.'))-1:!strchr(x0,'.')&&strchr(y0,'.')?strlen(strchr(y0,'.'))-1:operation=='*'?strlen(strchr(x0,'.'))+strlen(strchr(y0,'.'))-2:strlen(strchr(x0,'.'))>strlen(strchr(y0,'.'))?strlen(strchr(x0,'.'))-1:strlen(strchr(y0,'.'))-1:0;//Assign the number used for division (useless if `operation` (The operator) is '/')
 	switch(operation){//Check the operator
 		case '+'://Do the addition
 			removeDecimals(&x0,&y0);//Remove the floating point from both strings
@@ -396,11 +399,10 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 					return strtmp(x0,1);//Return a copy of the first string and free the original one
 				}
 			}
-			char *answer0=strtmp("",0),add0=0,add1=0,sign=(x0[0]=='-')^(y0[0]=='-')?'-':0;//Assign the sub-answer, the first addition variable, a the second addition variable & the sign character
+			char *answer0=strtmp("",0),add0=0,add1,sign=(x0[0]=='-')^(y0[0]=='-')?'-':0;//Assign the sub-answer, the first addition variable, a the second addition variable & the sign character
 			x0=fixnum(rmchr(absstr(x0,1),'.',1),1),y0=fixnum(rmchr(absstr(y0,1),'.',1),1);//Turn the number strings into whole number strings
 			for(size_t i=strlen(x0);i--;answer=addWhole(answer,strappend(add0?CHR2STR(add0+'0'):"",answer0,1),3),add0=0,answer0=mltstr("","0",strlen(x0)-i,0))//Do the multiplication digit by digit
-				for(size_t j=strlen(y0);j--;answer0=strappend(CHR2STR((add0+add1)%10+'0'),answer0,1),add0=(add0+add1)/10,add1=0)
-					for(char k=x0[i]-'0';k--;add1+=y0[j]-'0');
+				for(size_t j=strlen(y0);j--;add1=(x[i]-'0')*(y[j]-'0'),answer0=strappend(CHR2STR((add0+add1)%10+'0'),answer0,1),add0=(add0+add1)/10);
 			free(x0),free(y0),free(answer0);//Free both copies and the sub-answer
 			return returnPoint(strappend(mltstr(CHR2STR(sign),"0",divide,0),answer,3),divide,1);//Return the result with the floating point & the sign back
 		case '%'://Find the remainder of a division
@@ -421,8 +423,8 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 			}
 			removeDecimals(&x0,&y0),x0=absstr(x0,1),y0=absstr(y0,1);//Remove the floating point from both strings, and turn them into their absolute value
 			{//(For local usage)
-				char *divide=gcd(x0,y0,0);//Assign the greatest common divisor of both strings
-				x0=divideWhole(x0,divide,0,2),y0=divideWhole(y0,divide,0,3);//Simplify the division by dividing both strings by their greatest common divisor
+				char *divide0=gcd(x0,y0,0);//Assign the greatest common divisor of both strings
+				x0=divideWhole(x0,divide0,0,2),y0=divideWhole(y0,divide0,0,3);//Simplify the division by dividing both strings by their greatest common divisor
 			}
 			answer=strappend(answer,divideWhole(x0,y0,0,0),3),x0=divideWhole(x0,y0,1,2);//Append the whole division answer into the answer string and store its remainder in the first string
 			if(x0[0]>'0'){//(The remainder isn't "0")
@@ -458,7 +460,7 @@ char* calculate(char* x,char* y,char operation,char release){//Assign the main f
 			}
 			finish:
 			free(x0),free(y0);//Free both strings
-			return answer;//Return the answer
+			return fixnum(answer,1);//Return the standard form of the answer
 	}
 	free(x0),free(y0),free(answer);//Free every array which was allocated in the heap
 	return 0;//Return NULL (because the division was dividing by 0 which is undefined)
