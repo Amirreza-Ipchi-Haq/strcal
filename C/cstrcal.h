@@ -394,10 +394,9 @@ char* calculate(char* x,char* y,const char operation,const char release){//Assig
 				if(x0[0]=='1'&&strlen(x0)<2){//(The first string is "1" (This doesn't say the other one isn't))
 					free(x0);//Free the first string
 					return strtmp(y0,1);//Return a copy of the second string and free the original one
-				}else{//(The first string isn't "1" but the second string is)
-					free(y0);//Free the second string
-					return strtmp(x0,1);//Return a copy of the first string and free the original one
-				}
+				}//(The first string isn't "1" but the second string is)
+				free(y0);//Free the second string
+				return strtmp(x0,1);//Return a copy of the first string and free the original one
 			}
 			char *answer0=strtmp("",0),add0=0,add1,sign=(x0[0]=='-')^(y0[0]=='-')?'-':0;//Assign the sub-answer, the first addition variable, a the second addition variable & the sign character
 			x0=fixnum(rmchr(absstr(x0,1),'.',1),1),y0=fixnum(rmchr(absstr(y0,1),'.',1),1);//Turn the number strings into whole number strings
