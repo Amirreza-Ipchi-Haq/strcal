@@ -385,7 +385,7 @@ char* calculate(char* x,char* y,const char operation,const char release){//Assig
 				answer=strappend(x0[0]=='-'?"-":"",subtractWhole(absstr(x0,0),absstr(y0,1),3),1),free(x0),answer=answer[1]=='-'?strchr(answer,answer[2]):answer;//Subtract the strings by their absolute value, and if the answer has 2 '-', remove both of them
 			return returnPoint(answer,divide,1);//Return the result with the floating point back
 		case '*'://Do the multiplication
-			if((x0[0]=='0'&&strlen(x0)<2)||(y0[0]=='0'&&strlen(y0)<2)){//(One of the strings is "0")
+			if((x0[0]<'1'&&strlen(x0)<2)||(y0[0]<'1'&&strlen(y0)<2)){//(One of the strings is "0")
 				free(x0),free(y0),free(answer);//Free every string
 				return strtmp("0",0);//Return a copy of "0"
 			}
