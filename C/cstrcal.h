@@ -156,8 +156,8 @@ void removeDecimals(char** x,char** y){//Assign a function which removes the '.'
 char* addWhole(char* x,char* y,const char release){//Assign a function which does addition to 2 whole number strings
 	if(x[0]=='0'){//(The first string is "0")
 		if(release&2)//Free the first string if told to
-			free(y);
-		return strtmp(x,release&1);//Return a copy of the second string and free the original one if told to
+			free(x);
+		return strtmp(y,release&1);//Return a copy of the second string and free the original one if told to
 	}
 	if(y[0]=='0'){//(The second string is "0")
 		if(release&1)//Free the second string if told to
@@ -385,7 +385,7 @@ char* calculate(char* x,char* y,const char operation,const char release){//Assig
 				answer=strappend(x0[0]=='-'?"-":"",subtractWhole(absstr(x0,0),absstr(y0,1),3),1),free(x0),answer=answer[1]=='-'?strchr(answer,answer[2]):answer;//Subtract the strings by their absolute value, and if the answer has 2 '-', remove both of them
 			return returnPoint(answer,divide,1);//Return the result with the floating point back
 		case '*'://Do the multiplication
-			if((x0[0]<'1'&&strlen(x0)<2)||(y0[0]<'1'&&strlen(y0)<2)){//(One of the strings is "0")
+			if((x0[0]=='0'&&strlen(x0)<2)||(y0[0]=='0'&&strlen(y0)<2)){//(One of the strings is "0")
 				free(x0),free(y0),free(answer);//Free every string
 				return strtmp("0",0);//Return a copy of "0"
 			}
@@ -401,7 +401,7 @@ char* calculate(char* x,char* y,const char operation,const char release){//Assig
 			char *answer0=strtmp("",0),add0=0,add1,sign=(x0[0]=='-')^(y0[0]=='-')?'-':0;//Assign the sub-answer, the first addition variable, a the second addition variable & the sign character
 			x0=fixnum(rmchr(absstr(x0,1),'.',1),1),y0=fixnum(rmchr(absstr(y0,1),'.',1),1);//Turn the number strings into whole number strings
 			for(size_t i=strlen(x0);i--;answer=addWhole(answer,strappend(add0?CHR2STR(add0+'0'):"",answer0,1),3),add0=0,answer0=mltstr("","0",strlen(x0)-i,0))//Do the multiplication digit by digit
-				for(size_t j=strlen(y0);j--;add1=(x[i]-'0')*(y[j]-'0'),answer0=strappend(CHR2STR((add0+add1)%10+'0'),answer0,1),add0=(add0+add1)/10);
+				for(size_t j=strlen(y0);j--;add1=(x0[i]-'0')*(y0[j]-'0'),answer0=strappend(CHR2STR((add0+add1)%10+'0'),answer0,1),add0=(add0+add1)/10);
 			free(x0),free(y0),free(answer0);//Free both copies and the sub-answer
 			return returnPoint(strappend(mltstr(CHR2STR(sign),"0",divide,0),answer,3),divide,1);//Return the result with the floating point & the sign back
 		case '%'://Find the remainder of a division
