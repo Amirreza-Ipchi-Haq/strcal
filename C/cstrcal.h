@@ -58,7 +58,7 @@ char* strappend(char* s0,char* s1,const char release){//Assign a function which 
 	return strtmp(s,0);//Return a copy of the character array
 }
 char isWhole(const char* n){//Assign a function which checks if a string only contains digits
-	if(n||!strlen(n))//Return 0 which indicates as false if the string is NULL or the string length is 0
+	if(!n||!strlen(n))//Return 0 which indicates as false if the string is NULL or the string length is 0
 		return 0;
 	for(size_t i=strlen(n);i--;)//Check every index
 		if(n[i]<'0'||n[i]>'9')//(The current index contains something other than digits)
