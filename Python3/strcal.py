@@ -502,7 +502,7 @@ Examples:
 if __name__=="__main__": #Run an example if this module isn't running as a standalone script
 	while True: #Repeat the following lines forever
 		x=input("The first number: ") #Prompt for the first number as a string
-		operation=input("The operator (either `+`,`-`,`*`,`/` or `%`): ") #Prompt for the operator symbol
+		operation=input("The operator (either '+','-','*','/' or '%'): ") #Prompt for the operator symbol
 		y=input("The second number: ") #Prompt for the second number as a string
 		if operation!='+'and operation!='-'and operation!='*'and operation!='/'and operation!='%': #Alert if the current operator isn't valid
 			print("Not a valid operator!")
