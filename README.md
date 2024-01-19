@@ -18,4 +18,4 @@ I was calculating big numbers and saw that my small calculator wasn't able to sh
 
 The reason this is a library (and not a program) is that I didn't know what uses it could have. I've turned it into a library so others could use it too.
 ## Contact
-If you want to give your feedback about this module/library (e.g. You've found bugs, or you want more features), you can email me about it (My email address is ipchia3@gmail.com. It is visible under my profile if you're signed in to GitHub).
+If you want to give your feedback about this module/library (e.g. You've found bugs, or you want more features), you can [email me](mailto:ipchia3@gmail.com) about it (My email address is visible under my profile if you're signed in to GitHub).
