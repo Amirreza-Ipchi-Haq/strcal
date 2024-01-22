@@ -61,20 +61,20 @@ If you compile and run it, you can give an input like this:
 ```
 ### Explanation
 You first include the standard input/output library besides `cstrcal.h`. Then we have two functions called `isWhitespace` & `getstring`. `getstring` simply reads a string from the input stream (just like `gets` in `stdio.h` but without character limit or buffer overflow) using `isWhitespace` to skip the whitespaces.
-> [!NOTE]
-> If you want to use the `getstring` function in your code, besides defining `isWhitespace`, you should also `#include<stdlib.h>` (because it uses that library (The example doesn't provide it because `cstrcal.h` already includes that)). Also, when a character pointer is assigned with this function, it should be freed at the end.
+|Note: If you want to use the `getstring` function in your code, besides defining `isWhitespace`, you should also `#include<stdlib.h>` (because it uses that library (The example doesn't provide it because `cstrcal.h` already includes that)). Also, when a character pointer is assigned with this function, it should be freed at the end.|
+|:---|
 
 In the main function, we have assigned 2 character pointers representing the first & the second numbers & a character variable for the operator. We then read and assign the strings & the character values from the standard input and by skipping whitespaces. Then, we check if the given operator is valid and alert if it isn't. After that, we check if both strings represent numbers and alert if at least one of them doesn't. Then, we turn numbers stored as strings to their standard form before we do operation on them.
-> [!IMPORTANT]
-> The strings must be always checked if they represent numbers and then standardized before they're given to do operations on them. Unless, you might experience an undefined behaviour.
+|Important: The strings must be always checked if they represent numbers and then standardized before they're given to do operations on them. Unless, you might experience an undefined behaviour.|
+|:---|
 
 You might notice that there's a second argument in the `fixnum` and a forth argument in the `calculate` function. That's the `release` argument used to tell if the given string(s) need to be freed or not. We'll talk about that later.
 
 Most functions in this library which have a `char*` return type return a string allocated in the heap, or `NULL` if the given argumants are invalid. The `calculate` function is one of them, and retuns `NULL` if the given operator is invalid, or it's dividing by 0. Since we've checked the given operator, the only reason it can return `NULL` is dividing by 0. If it returns a string, we print the string. Unless, we alert that we cannot divide by 0. Finally, we print a newline in case if the program is running in the command prompt/terminal (If you don't get its use, you can simply ignore its existance).
 ## About the `release` argument
 Since one of the ways to store strings in C is assigning a dynamic character array in a character pointer (which is the way strings are mostly returned in this library), there's an option which allows users to free the strings given as arguments. For string-returning functions which take only one string as an input, you can set its `release` argument to `1` in case it needs to be freed. Unless, you can pass `0` to it.
-> [!IMPORTANT]
-> String literals & static character arrays must not be freed because they're allocated in the stack (and not heap) and thus, they're not freeable. If you do such, you'll get a runtime error.
+|Important: String literals & static character arrays must not be freed because they're allocated in the stack (and not heap) and thus, they're not freeable. If you do such, you'll get a runtime error.|
+|:---|
 
 But what if the function needed 2 strings as an input (like `calculate`, for example)? In such case, we can do the following steps below:
 1. Set the initial value of the `release` argument to `0`.
