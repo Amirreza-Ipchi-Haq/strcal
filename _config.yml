@@ -1,9 +1,0 @@
-# Site settings
-title: The strcal documentation
-author:
-  name: Amirreza Ipchi-e-Haq
-  email: ipchia3@gmail.com
-description: "The strcal documentation"
-
-# Build settings
-markdown: GFM
