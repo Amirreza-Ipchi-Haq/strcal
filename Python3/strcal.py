@@ -501,16 +501,31 @@ Examples:
 	return #Return `None if the operator is invalid
 if __name__=="__main__": #Run an example if this module isn't running as a standalone script
 	while True: #Repeat the following lines forever
-		x=input("The first number: ") #Prompt for the first number as a string
-		operation=input("The operator (either '+','-','*','/' or '%'): ") #Prompt for the operator symbol
-		y=input("The second number: ") #Prompt for the second number as a string
-		if operation!='+'and operation!='-'and operation!='*'and operation!='/'and operation!='%': #Alert if the current operator isn't valid
+		operation=input() #Prompt for the operation
+		if operation.find('+')>-1: #(The given operator is '+')
+			operator='+' #Store the given operator
+		elif operation.find('-')>-1: #(The given operator is '-')
+			operator='-' #Store the given operator
+		elif operation.find('*')>-1: #(The given operator is '*')
+			operator='*' #Store the given operator
+		elif operation.find('/')>-1: #(The given operator is '/')
+			operator='/' #Store the given operator
+		elif operation.find('%')>-1: #(The given operator is '%')
+			operator='%' #Store the given operator
+		else: #Alert if there's not a valid operator
 			print("Not a valid operator!")
-		elif isnum(x)and isnum(y): #(Both strings represent numbers
-			x=calculate(fixnum(x),fixnum(y),operation) #Do the operation
-			if x==None: #Alert if the operation divides a number by 0
+			continue #Restart the loop
+		operation=operation.split(operator) #Split the operation
+		if len(operation)!=2: #(There are more than 2 numbers)
+			print("Operating on more than 2 numbers isn't supported!")
+			continue #Restart the loop
+		operation[0]=operation[0].strip() #Remove whitespaces from the first splitted string
+		operation[1]=operation[1].strip() #Remove whitespaces from the second splitted string
+		if isnum(operation[0])and isnum(operation[1]): #(Both strings represent numbers)
+			operation=calculate(fixnum(operation[0]),fixnum(operation[1]),operator) #Do the operation
+			if operation==None: #Alert if the operation divides a number by 0
 				print("Cannot divide by 0!")
 			else: #Print the answer
-				print("The answer:",x)
+				print(operation)
 		else: #Alert which string doesn't represent a number
-			print("The",("first & the third input aren't numbers"if not isnum(x)and not isnum(y)else("first"if isnum(y)else"third")+" input isn't a number")+'!')
+			print("The",("first & the third input aren't numbers"if not isnum(operation[0])and not isnum(operation[1])else("first"if isnum(operation[1])else"third")+" input isn't a number")+'!')
