@@ -9,11 +9,11 @@ void setup(){
 void loop(){
 	Serial.print("The first number: ");//Prompt for the first number
 	while(!Serial.available());//Wait for input
-	x=Serial.readString(),x.trim(),Serial.println(x),Serial.print("The operator: ");//Store the first number, trim it, display it and prompt for the operator
+	x=Serial.readString().trim(),Serial.println(x),Serial.print("The operator: ");//Store the first number, trim it, display it and prompt for the operator
 	while(!Serial.available());//Wait for input
 	operation=Serial.readString()[0],Serial.println(operation),Serial.print("The second number: ");//Store the operator character, display it and prompt for the second number
 	while(!Serial.available());//Wait for input
-	y=Serial.readString(),y.trim(),Serial.println(y);//Store the second number, trim it and display it
+	y=Serial.readString().trim(),Serial.println(y);//Store the second number, trim it and display it
 	if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='%'&&operation!='/')//Alert if the operator isn't valid
 		Serial.println("Not a valid operator!");
 	else if(strcal::isnum(x)&&strcal::isnum(y)){//Both numbers are valid
