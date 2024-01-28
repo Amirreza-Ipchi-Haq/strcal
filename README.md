@@ -21,10 +21,10 @@ The reason this is a library (and not a program) is that I didn't know what uses
 If you want to learn how to use this library, these links can be helpful:
 |Language|Documentation Link|Reference Link|
 |-|-|-|
-|C|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/c/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/c/reference.md)|
-|C++|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpp/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpp/reference.md)|
-|C++ for Arduino|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpparduino/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpparduino/reference.md)|
-|Python3|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/python3/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/python3/reference.md)|
+|C|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Reference.md)|
+|C++|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP/Reference.md)|
+|C++ for Arduino|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP_ForArduino/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP_ForArduino/Reference.md)|
+|Python3|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/Python3/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/Python3/Reference.md)|
 
 ## Contact
 If you want to give your feedback about this module/library (e.g. You've found bugs, or you want more features), you can [email me](mailto:ipchia3@gmail.com) about it (My email address is visible under my profile if you're signed in to GitHub).
