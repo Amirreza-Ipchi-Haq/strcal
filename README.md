@@ -17,5 +17,14 @@ This module/library uses the same method which is taught at elementary school on
 I was calculating big numbers and saw that my small calculator wasn't able to show the full number, so I've decided to calculate it by hand when randomly this idea came into my head.
 
 The reason this is a library (and not a program) is that I didn't know what uses it could have. I've turned it into a library so others could use it too.
+## Guide
+If you want to learn how to use this library, these links can be helpful:
+|Language|Documentation Link|Reference Link|
+|-|-|-|
+|C|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/c/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/c/reference.md)|
+|C++|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpp/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpp/reference.md)|
+|C++ for Arduino|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpparduino/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/cpparduino/reference.md)|
+|Python3|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/python3/documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/guide/python3/reference.md)|
+
 ## Contact
 If you want to give your feedback about this module/library (e.g. You've found bugs, or you want more features), you can [email me](mailto:ipchia3@gmail.com) about it (My email address is visible under my profile if you're signed in to GitHub).
