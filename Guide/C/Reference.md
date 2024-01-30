@@ -5,7 +5,7 @@ In this reference, it is assumed that you've already read the [documentation](ht
 |Macro|Description|
 |-|-|
 |[`CHR2STR(c)`](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Reference/CHR2STR.md)|Converts a character to a static character array which is a string.|
-|[`MOD10(n)`](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Reference/MOD10.md)|Returns `n` modulus 10 in char format.|
+|[`MOD10(n)`](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Reference/MOD10.md)|Returns `n` modulus 10 in char type.|
 ### Functions
 |Function|Description|
 |-|-|
