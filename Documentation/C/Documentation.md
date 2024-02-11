@@ -14,8 +14,7 @@ int main(){
 		x=strtmp("",0);//Initializes the first number string
 		while(c!='+'&&(c!='-'||!strlen(x))&&c!='*'&&c!='/'&&c!='%')//Reads the first number string
 			x=strappend(x,CHR2STR(c),2),c=getchar();
-		operation=c;//Reads the operation
-		c=getchar();
+		operation=c,c=getchar();//Reads the operation
 		while(WHITE(c))//Skips the whitespace
 			c=getchar();
 		y=strtmp("",0);//Initializes the second number string
@@ -33,8 +32,8 @@ int main(){
 			if(i<strlen(y))
 				y=strntmp(y,i,1);
 		}
-		if(isnum(x)&&isnum(y)){//Checks both strings if they represent numbers
-			x=calculate(fixnum(x,1),fixnum(y,1),operation,3);//Makes both strings standard before calculation
+		if(isrnum(x)&&isrnum(y)){//Checks both strings if they represent numbers
+			x=rcalculate(fixrnum(x,1),fixrnum(y,1),operation,3);//Makes both strings standard before calculation
 			if(x){
 				printf("%s",x);
 				free(x);
