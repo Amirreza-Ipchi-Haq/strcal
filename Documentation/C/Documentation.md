@@ -5,7 +5,7 @@ In order to create a simple calculator program using this library, we can use th
 ```c
 #include<stdio.h>
 #include"cstrcal.h"
-#define WHITE(c) (char)c==' '||(char)c=='\t'||(char)c=='\n'||(char)c=='\r'//Defines a macro to check if a character is a whitespace
+#define WHITE(c) ((char)c==' '||(char)c=='\t'||(char)c=='\n'||(char)c=='\r')//Defines a macro to check if a character is a whitespace
 int main(){
 	char c=getchar(),*x,operation,*y;//Assigns the first number string, the operator character & the second number string
 	while(1){//Repeats forever
