@@ -14,7 +14,7 @@ int main(){
 		x=strtmp("",0);//Initializes the first number string
 		while(c!='+'&&(c!='-'||!strlen(x))&&c!='*'&&c!='/'&&c!='%')//Reads the first number string
 			x=strappend(x,CHR2STR(c),2),c=getchar();
-		operation=c,c=getchar();//Reads the operation
+		operation=c,c=getchar();//Reads the operator
 		while(WHITE(c))//Skips the whitespace
 			c=getchar();
 		y=strtmp("",0);//Initializes the second number string
@@ -49,7 +49,7 @@ int main(){
 			free(x);
 			free(y);
 		}
-		printf("\n");//Prints a newline (Useful if its running in a terminal)
+		printf("\n");//Prints a newline
 	}
 	return 0;
 }
