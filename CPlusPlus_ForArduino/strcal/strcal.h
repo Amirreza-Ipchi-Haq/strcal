@@ -20,5 +20,9 @@ namespace strcal{
 	String divideWhole(String x,String y,const bool option);
 	String gcd(String x,String y);
 	String calculate(String x,String y,const char operation);
+	bool isrnum(String n);
+	String fixrnum(String n);
+	void rnum2frac(String n,String &dividend,String &divisor);
+	String rcalculate(String x,String y,char operation);
 }
 #endif
