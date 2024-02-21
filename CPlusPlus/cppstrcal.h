@@ -46,7 +46,7 @@ namespace strcal{
 			return n;
 		const char sign=n[0]=='-';//Assign the sign variable
 		n=absstr(n);//Turn the number into it's absolute form
-		while((strExists(n,".")?n.find('.')-1:n.size())>1&&n[0]=='0')//Remove the '0's at the left
+		while((strExists(n,".")?n.find('.')-1:n.size())>1&&n[0]=='0')//Remove the '0's from the left
 			n.erase(0,1);
 		if(strExists(n,".")){//(The string contains '.')
 			while(n.back()=='0'||n.back()=='.')//Remove the '0's at the right
@@ -61,7 +61,8 @@ namespace strcal{
 	std::string returnPoint(std::string n,const size_t posFromRight){//Assign a function which returns '.' back to a string
 		if(!posFromRight)//Return the original string if the position of '.' to be put from the right is 0
 			return n;
-		return fixnum("0"+n.insert(n.size()-posFromRight,"."));//Return the string with the '.' back
+		n.insert(n[0]=='-',mltstr("","0",posFromRight>=n.size()?posFromRight-n.size()+(n[0]=='-')+1:0));//Put extra '0's at the back
+		return n.insert(n.size()-posFromRight,".");//Return the string with the '.' back
 	}
 	void removeDecimals(std::string &x,std::string &y){//Assign a function which removes the floating point by multiplying both numbers by 10
 		if(strExists(x,".")&&!strExists(y,"."))//Add '0's with the number of decimals in the first string to the second string and remove the '.' from the first one if the first string contains '.' and the second string doesn't
@@ -103,7 +104,7 @@ namespace strcal{
 		return 0;//Return 0 indicating that both strings are exactly the same
 	}
 	uint8_t mod10(const int8_t n){//Assign a function which finds mod10
-		return n<0?10+n%10:n%10;//Return the answer
+		return n%10<0?10+n%10:n%10;//Return the answer
 	}
 	std::string subtractWhole(std::string x,std::string y){//Assign a function which subtracts a whole number from another as strings
 		if(y=="0")//Return the first string if the second string is "0"
@@ -205,7 +206,7 @@ namespace strcal{
 					x=fixnum(rmstr(absstr(x),".")),y=fixnum(rmstr(absstr(y),"."));//Remove '.' & '-' from both strings
 					for(size_t i=x.size();i--;answer=addWhole(answer,(add0?std::string(1,add0+'0'):"")+answer0),add0=0,answer0=mltstr("","0",x.size()-i))//Do the multiplication digit by digit
 						for(size_t j=y.size();j--;add1=(x[i]-'0')*(y[j]-'0'),answer0.insert(0,1,(add0+add1)%10+'0'),add0=(add0+add1)/10);
-					return returnPoint(mltstr(sign?"-":"","0",divide)+answer,divide);//Return the answer if the sign & the floating point back
+					return returnPoint((sign?"-":"")+answer,divide);//Return the answer if the sign & the floating point back
 				}
 			case '%'://Find the remainder
 				if(y=="0")//Break out of the switch-case statement if the second string is "0" (which is invalid)
@@ -252,6 +253,89 @@ namespace strcal{
 				return fixnum(answer);//Return standard form of the answer
 		}
 		return "";//Return an empty string if the operation is invalid
+	}
+	bool isrnum(std::string n){//Assign a function same as `isnum` with recursive number support
+		if(n.size()<2)//Check if the string represents a whole number if it contains less than 2 characters
+			return isWhole(n);
+		if(((!strExists(n,"("))^(n.back()!=')'))||n.find('(')!=n.rfind('(')||n.find(')')!=n.rfind(')'))//Return 0 which indicates as false if the string has a bracket with no matching pair or there are more than 2 brackets
+			return 0;
+		if(!strExists(n,"("))//Check the number string as a terminating one if it has no brackets
+			return isnum(n);
+		if(!strExists(n,".")||n.find('.')>n.find('('))//Return 0 which indicates as false if the bracket position is invalid
+			return 0;
+		if(!isWhole(n.substr(n.find('(')+1,n.size()-n.find('(')-2)))//Return 0 which indicates as false if the recursion is invalid
+			return 0;
+		return isnum(rmstr(rmstr(n,"("),")"));//Check the number string without brackets
+	}
+	std::string fixrnum(std::string n){//Assign a function same as `fixnum` with recursive number support
+		if(!strExists(n,"("))//Check the number string as a terminating one if it contains no brackets
+			return fixnum(n);
+		char sign=n[0]=='-';//Assign the sign indicator
+		std::string n0=n.substr(n.find('(')+1,n.size()-n.find('(')-2);//Assign a string which stores the recursive part
+		n=absstr(n.substr(0,n.size()-n0.size()-2));//Set the number string into two parts by assigning 2 strings
+		while((strExists(n,".")?n.find('.')-1:n.size())>1&&n[0]=='0')//Remove the '0's from the left in the terminating part
+			n.erase(0,1);
+		if(fixnum(n0)=="0"){//Return only the terminating part if the recursive part contains only '0's
+			if(n.back()=='.')
+				n.pop_back();
+			return fixnum((sign?"-":"")+n);
+		}
+		for(char modify=1;modify&&n0.size()>1;)//Shorten the recursive part
+			for(size_t len=n0.size()/2;len;len--){
+				if(n0.size()%len)
+					continue;
+				modify=n0.substr(0,len)==n0.substr(n0.size()-len,len);
+				for(size_t i=n0.size()/len-1;modify&&--i;modify=n0.substr(0,len)==n0.substr(len*i-1,len));
+				if(modify){
+					n0=n0.substr(0,len);
+					break;
+				}
+			}
+		while(n.back()==n0.back())//Shorten the number string as much as possible
+			n0=n0.back()+n0.substr(0,n0.size()-1),n=n.substr(0,n.size()-1);
+		if(n0=="9")//Return 1 more of the terminating part only if the recursive part is only "9"
+			return (sign?"-":"")+returnPoint(addWhole(fixnum(rmstr(n,".")),"1"),n.size()-n.find('.')-1);
+		return (sign?"-":"")+n+"("+n0+")";//Return the result
+	}
+	void rnum2frac(std::string n,std::string &dividend,std::string &divisor){//Assign a function which turns number strings into parts of a fraction
+		if(!strExists(n,"("))//(The number string isn't recursive)
+			divisor=mltstr("1","0",strExists(n,".")?n.size()-n.find('.')-1:0),dividend=fixnum(rmstr(n,"."));
+		else{//(The number string is recursive)
+			char sign=n[0]=='-';//Assign the sign indicator
+			dividend=n.substr(0,n.find('(')),n=n.substr(n.find('(')+1,n.size()-n.find('(')-2);//Divide the number string into 2 parts
+			if(dividend.back()=='.')//Remove the '.' at the right if it exists
+				dividend.pop_back();
+			divisor=mltstr(mltstr("","9",n.size()),"0",strExists(dividend,".")?dividend.size()-dividend.find('.')-1:0),dividend=(sign?"-":"")+calculate(calculate(absstr(fixnum(dividend)),divisor,'*'),fixnum(n),'+');//Set the dividend & the divisor to their actual value
+		}
+		return;
+	}
+	std::string rcalculate(std::string x,std::string y,char operation){//Assign a function same as `calculate` with recursive number support
+		if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='/'&&operation!='%')//Return an empty string if the operator is invalid
+			return "";
+		if((x=="0"||y=="0")&&(operation=='+'||operation=='-')){//(At least one of the strings is "0" and the operator is either '+' or '-')
+			if(y=="0")//Return the first string if the second string is "0"
+				return x;
+			return(operation=='-'&&y[0]!='-'?"-":"")+absstr(y);//Modify the second string and return it if the first string is "0"
+		}
+		if(y=="0"&&(operation=='/'||operation=='%'))//Return an empty string if the second number string is "0" and the operator is either '/' or '%'
+			return "";
+		if(y=="1"&&(operation=='*'||operation=='/'))//Return the first number string if the second number string is "1" and the operator is either '*' or '/'
+			return x;
+		if(x=="1"&&operation=='*')//Return the second number string if the first number string is "1" and the operator is '*'
+			return y;
+		if(x==y&&(operation=='/'||operation=='%'))//Return either "0" or "1" if both number strings are equal and the operator is either '/' or '%'
+			return operation=='/'?"1":"0";
+		if(!strExists(x,"(")&&!strExists(y,"("))//Calculate as terminating numbers if none of the number strings have brackets
+			return calculate(x,y,operation);
+		std::string x0,y0;//Assign the divisors (The strings would now be called dividends)
+		rnum2frac(x,x,x0),rnum2frac(y,y,y0);//Turn the number strings into fractions and start the calculation
+		if(operation!='*'&&operation!='/'){
+			std::string lcm=divideWhole(calculate(x0,y0,'*'),gcd(x0,y0),0);
+			return calculate(calculate(calculate(x,divideWhole(lcm,x0,0),'*'),calculate(y,divideWhole(lcm,y0,0),'*'),operation),lcm,'/');
+		}
+		if(operation=='*')
+			return calculate(calculate(x,y,'*'),calculate(x0,y0,'*'),'/');
+		return calculate(calculate(x,y0,'*'),calculate(x0,y,'*'),'/');
 	}
 }
 #endif
