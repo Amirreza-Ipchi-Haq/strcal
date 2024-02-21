@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<string.h>
 #define CHR2STR(c) (char[2]){c,0}//Assign a character-to-string function
-#define MOD10(n) (char)(n<0?10+n%10:n%10)//Assign a function which finds `n mod 10`
+#define MOD10(n) (char)(n%10<0?10+n%10:n%10)//Assign a function which finds `n mod 10`
 char* strtmp(char* s,const char release){//Assign a function which creates a temporary string (Same as `strdup` with memory management included)
 	if(!s)//(The string is NULL)
 		return s;//Return NULL
@@ -85,27 +85,23 @@ char* absstr(char* n,const char release){//Assign a function which removes the f
 		free(n);
 	return n0;//Return the result
 }
-char isnum(char* n){//Check is a string represents a number (standard (like 1) or non-standard (like 01.0))
-	if(!n||(strlen(n)<2&&!isWhole(n)))//(The string is NULL/empty, or if it's length is 1, it contains something other than digits)
-		return 0;//Return 0 which indicates as false
-	char *n0=absstr(n,0);//Create a copy of the original string without the first '-' if it exists
-	if(strchr(n0,'-')){//(There's more than one '-')
-		free(n0);//Free the copy
-		return 0;//Return 0 which indicates as false
-	}
-	if(strchr(n0,'.')){//(There's a '.' inside the string)
-		if(n0[0]=='.'||n0[strlen(n0)-1]=='.'||strchr(strchr(strchr(n0,'.'),strchr(n0,'.')[1]),'.')){//(The first/last index of the string is '.', or there is more than one '.')
-			free(n0);//Free the copy
-			return 0;//Return 0 which indicates as false
-		}
-		n0=rmchr(n0,'.',1);//Remove the '.' from the string
-	}
-	if(isWhole(n0)){//(The remaining characters of the string are only digits after removing '-' & '.')
-		free(n0);//Free the copy
-		return 1;//Return 1 which indicates as true
-	}
-	free(n0);//Free the copy
-	return 0;//Return 0 which indicates as false (because the condition above was false)
+char isnum(char* n){//Assign a function which checks if a string represents a number (standard (like 1) or non-standard (like 01.0))
+	if(!n)//Return 0 which indicates as false if the string is NULL
+		return 0;
+	if(strlen(n)<2)//Check the number string if it only contains 1 character
+		return isWhole(n);//Return the result
+	char isNegative=n[0]=='-';//Assign the negativity indicator
+	if(n[isNegative]<'0'||n[isNegative]>'9'||n[strlen(n)-1]<'0'||n[strlen(n)-1]>'9')//Return 0 which indicates as false if the string doesn't represent a number (Check the beginning & the end)
+		return 0;
+	char reachedPoint=0;//Assign the point indicator
+	for(size_t i=strlen(n)-1;--i>isNegative;)//Check every digit
+		if(n[i]=='.'){//(Reached the point)
+			if(reachedPoint)//Return 0 which indicates as false if a point was already found
+				return 0;
+			reachedPoint=1;//Change the point indicator
+		}else if(n[i]<'0'||n[i]>'9')//Return 0 which indicates as false if the current character isn't valid
+			return 0;
+	return 1;//Return 1 which indicates as true because the string represents a number
 }
 char* fixnum(char* n,const char release){//Assign a function which turns the numbers in their standard form in form of string
 	if(strlen(n)<2)//(The string only contains 1 character, so it's definitely in the standard form)
@@ -131,9 +127,9 @@ void swapstr(char** a,char** b){//Assign a function which swaps 2 strings alloca
 char* returnPoint(char* n,const size_t posFromRight,const char release){//Assign a function which returns the '.' to an integer string
 	if(!posFromRight)//Cancel the purpose of the function if `posFromRight` is zero
 		return strtmp(n,release);//Return a copy of the string and free the original one if told to
-	char *tmp=absstr(n,0),*result=posFromRight<strlen(tmp)?"":"0",sign=n[0]=='-'?'-':0;//Assign variables
+	char *tmp=absstr(n,0),*result=posFromRight<strlen(tmp)?strtmp("",0):mltstr("0.","0",posFromRight-strlen(tmp),0),sign=n[0]=='-'?'-':0;//Assign variables
 	free(tmp);//Free the temporary string
-	for(size_t i=sign=='-';i<strlen(n);result=strappend(result,i==strlen(n)-posFromRight?strappend(".",CHR2STR(n[i]),0):CHR2STR(n[i]),0),i++);//Return the '.' to the whole number
+	for(size_t i=sign=='-';i<strlen(n);result=strappend(result,strlen(n)>posFromRight&&i==strlen(n)-posFromRight?strappend(".",CHR2STR(n[i]),0):CHR2STR(n[i]),2),i++);//Return the '.' to the whole number
 	if(release)//Free the string if told to
 		free(n);
 	return fixnum(strappend(CHR2STR(sign),result,1),1);//Put the sign at the back of the result and return it
@@ -220,7 +216,7 @@ char* simpleWholeDivide(char* x,char* y,const char option,const char release){//
 			free(y);
 		return 0;//Return NULL
 	}
-	if(y[0]=='1'&&strlen(y)<2){//(The second string is "1")
+	if(y[0]<'2'&&strlen(y)<2){//(The second string is "1")
 		if(release&1)//Free the second string if told to
 			free(y);
 		if(option){//(The function asked for the remainder)
@@ -283,7 +279,7 @@ char* divideWhole(char* x,char* y,const char option,const char release){//(Same 
 			free(y);
 		return 0;//Return NULL
 	}
-	if(y[0]=='1'&&strlen(y)<2){//(The second string is "1")
+	if(y[0]<'2'&&strlen(y)<2){//(The second string is "1")
 		if(release&1)//Free the second string if told to
 			free(y);
 		if(option){//(The function asked for the remainder)
@@ -463,5 +459,127 @@ char* calculate(char* x,char* y,const char operation,const char release){//Assig
 	}
 	free(x0),free(y0),free(answer);//Free every array which was allocated in the heap
 	return 0;//Return NULL (because the division was dividing by 0 which is undefined)
+}
+char isrnum(char* n){//Assign a function same as `isnum` with recursive number support
+	if(!n)//Return 0 which indicates as false if the string is NULL
+		return 0;
+	if(strlen(n)<2)//Check if the string represents a whole number if it contains less than 2 characters
+		return isWhole(n);
+	if(((!strchr(n,'('))^(n[strlen(n)-1]!=')'))||strchr(n,'(')!=strrchr(n,'(')||strchr(n,')')!=strrchr(n,')'))//Return 0 which indicates as false if the string has a bracket with no matching pair or there are more than 2 brackets
+		return 0;
+	if(!strchr(n,'('))//Check the number string as a terminating one if it has no brackets
+		return isnum(n);
+	if(!strchr(n,'.')||strlen(strchr(n,'('))>strlen(strchr(n,'.')))//Return 0 which indicates as false if the bracket position is invalid
+		return 0;
+	char *n0=strnrtmp(n,strlen(strchr(n,'('))-1,0);//Assign a string which only stores the recursive part of the number string
+	n0=strntmp(n0,strlen(n0)-1,1);//Remove the extra ')'
+	if(!isWhole(n0)){//(The recursive part is invalid)
+		free(n0);//Free the string
+		return 0;//Return 0 which indicates as false
+	}
+	free(n0),n0=rmchr(rmchr(n,'(',0),')',1);//Free the string and assign it with the number string without brackets
+	if(isnum(n0)){//(The number string is valid itself)
+		free(n0);//Free the string
+		return 1;//Return 1 which indicates as true
+	}
+	free(n0);//Free the string
+	return 0;//Return 0 which indicates as false if the number string is invalid itself
+}
+char* fixrnum(char* n,char release){//Assign a function same as `fixnum` with recursive number support
+	if(!strchr(n,'('))//Check the number string as a terminating one if it contains no brackets
+		return fixnum(n,release);
+	char sign=n[0]=='-'?'-':0,*n0=strnrtmp(n,strlen(strchr(n,'('))-1,0),*n1=strntmp(n,strlen(n)-strlen(n0)-1,release);//Assign the sign indicator, the recursive part & the terminating part
+	n0=strntmp(n0,strlen(n0)-1,1),n1=absstr(n1,1);//Remove the extra ')' from the recursive part and remove the sign from the terminating part if it exists
+	while(strlen(n1)-(strchr(n1,'.')?strlen(strchr(n1,'.')):0)>1&&n1[0]=='0')//Remove the zeros from the left of the terminating part
+		n1=strnrtmp(n1,strlen(n1)-1,1);
+	{//Check if the recursive part only contains '0' or '9' or none in a temporary scope
+		char isZero=1,isNine=1;//Assign the boolean variables
+		for(size_t i=strlen(n0);(isZero||isNine)&&i--;isZero*=n0[i]=='0',isNine*=n0[i]=='9');//Check the digits
+		if(isZero){//(The recursive part only contains '0')
+			free(n0);//Free the recursive part
+			return fixnum(strappend(CHR2STR(sign),n1[strlen(n1)-1]=='.'?strntmp(n1,strlen(n1)-1,1):n1,1),1);//Standardize the terminating part and return it
+		}
+		if(isNine){//(The recursive part only contains '9')
+			free(n0);//Free the recursive part
+			size_t point=strlen(strchr(n1,'.'))-1;//Assign a floating point variable (Not to be mistaken with the data type)
+			return strappend(CHR2STR(sign),returnPoint(addWhole(fixnum(rmchr(n1,'.',1),1),"1",2),point,1),1);//Return the actual answer
+		}
+	}
+	for(char modify=1,*n2,*n3;modify&&strlen(n0)>1;)//Shorten the repeating part
+		for(size_t len=strlen(n0)/2;len;len--){
+			if(strlen(n0)%len)
+				continue;
+			n2=strntmp(n0,len,0),n3=strnrtmp(n0,len,0),modify=!cmpstr(n2,n3);
+			for(size_t i=strlen(n0)/len-1;modify&&--i;free(n3),n3=strnrtmp(strntmp(n0,len*i,0),len,1),modify=!cmpstr(n2,n3));
+			free(n2),free(n3);
+			if(modify){
+				n0=strntmp(n0,len,1);
+				break;
+			}
+		}
+	while(n0[strlen(n0)-1]==n1[strlen(n1)-1])//Shorten the number string by checking the last index of both the terminating part and the repeating part
+		n0=mltstr(strappend(CHR2STR(n0[strlen(n0)-1]),strntmp(n0,strlen(n0)-1,0),1),n0,0,3),n1=strntmp(n1,strlen(n1)-1,1);	
+	return strappend(CHR2STR(sign),strappend(strappend(strappend(n1,"(",2),n0,3),")",2),1);//Return the result
+}
+void rnum2frac(char* n,char** dividend,char** divisor,char release){//Assign a function which converts number strings to fraction
+	if(!strchr(n,'('))//(The number string isn't recursive)
+		*divisor=mltstr("1","0",strchr(n,'.')?strlen(strchr(n,'.'))-1:0,0),*dividend=fixnum(rmchr(n,'.',release),1);
+	else{//(The number string is recursive)
+		char *n0=strnrtmp(n,strlen(strchr(n,'('))-1,0),sign=n[0]=='-'?'-':0;
+		*dividend=strntmp(n,strlen(n)-strlen(n0)-1,release),n0=strntmp(n0,strlen(n0)-1,1),*divisor=mltstr(mltstr("","9",strlen(n0),0),"0",strlen(strchr(*dividend,'.'))-1,2);
+		if(strlen(strchr(*dividend,'.'))<2)
+			*dividend=strntmp(*dividend,strlen(*dividend)-1,1);
+		*dividend=strappend(CHR2STR(sign),calculate(calculate(absstr(fixnum(*dividend,1),1),*divisor,'*',2),fixnum(n0,1),'+',3),1);
+	}
+	return;
+}
+char* rcalculate(char* x,char* y,char operation,char release){//Assign a function same as `calculate` with recursive number support
+	if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='/'&&operation!='%')//Return `NULL` if the operator is invalid
+		return 0;
+	if(((x[0]<'1'&&strlen(x)<2)||(y[0]<'1'&&strlen(y)<2))&&(operation=='+'||operation=='-')){//(At least one of the number strings is "0" and the operator is either '+' or '-')
+		if(y[0]=='0'&&strlen(y)<2){//(The second number string is "0")
+			if(release&1)//Free the second number string if told to
+				free(y);
+			return strtmp(x,release&2);//Return the first number string and free it afterwards if told to
+		}//(The second number string is "0")
+		if(release&2)//Free the first number string if told to
+			free(x);
+		return mltstr(strappend(operation=='-'&&y[0]!='-'?"-":"",absstr(y,0),1),y,0,2+(release&1));//Modify the second number string and return it
+	}
+	if(y[0]<'1'&&strlen(y)<2&&(operation=='/'||operation=='%')){//(The second number string is "0" and the operator is either '/' or '%')
+		if(release&2)//Free the first number string if told to
+			free(x);
+		if(release&1)//Free the second number string if told to
+			free(y);
+		return 0;//Return NULL
+	}
+	if(y[0]=='1'&&strlen(y)<2&&(operation=='*'||operation=='/')){//(The second number string is "1" and the operator is either '*' or '/')
+		if(release&1)//Free the second number string if told to
+			free(y);
+		return strtmp(x,release&2);//Return the first number string and free it afterwards if told to
+	}
+	if(x[0]=='1'&&strlen(x)<2&&operation=='*'){//(The first number string is "1" and the operator is '*')
+		if(release&2)//Free the first number string if told to
+			free(x);
+		return strtmp(y,release&1);//Return the second number string and free it afterwards if told to
+	}
+	if(!cmpstr(x,y)&&(operation=='/'||operation=='%')){//(Both number strings are equal and the operator is either '/' or '%')
+		if(release&2)//Free the first string if told to
+			free(x);
+		if(release&1)//Free the second string if told to
+			free(y);
+		return strtmp(operation=='/'?"1":"0",0);//Return an answer based on the operator
+	}
+	if(!strchr(x,'(')&&!strchr(y,'('))//Calculate as terminating numbers if none of the number strings have brackets
+		return calculate(x,y,operation,release);
+	char *x0,*y0,*x1,*y1;//Assign the first & second dividend & divisor
+	rnum2frac(x,&x0,&x1,release&2),rnum2frac(y,&y0,&y1,release&2);//Convert both number strings to parts of fractions and then start the calculation
+	if(operation!='*'&&operation!='/'){
+		char *lcm=divideWhole(calculate(x1,y1,'*',0),gcd(x1,y1,0),0,3);
+		return calculate(calculate(calculate(x0,divideWhole(lcm,x1,0,1),'*',3),calculate(y0,divideWhole(lcm,y1,0,1),'*',3),operation,3),lcm,'/',3);
+	}
+	if(operation=='*')
+		return calculate(calculate(x0,y0,'*',3),calculate(x1,y1,'*',3),'/',3);
+	return calculate(calculate(x0,y1,'*',3),calculate(x1,y0,'*',3),'/',3);
 }
 #endif
