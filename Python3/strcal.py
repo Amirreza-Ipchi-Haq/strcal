@@ -114,7 +114,7 @@ Examples:
 	'64'"""
 	if not posFromRight: #Return the same string if the given position from right was 0
 		return n
-	return fixnum((n[:len(n)-posFromRight]if len(n)>posFromRight else'0')+'.'+n[len(n)-posFromRight:]) #Return the number string with the floating point added
+	return fixnum((n[:len(n)-posFromRight]if len(n)>posFromRight else'0')+'.'+('0'*(len(n)-posFromRight)if len(n)<posFromRight else '')+n[len(n)-posFromRight:]) #Return the number string with the floating point added
 def removeDecimals(x,y):
 	"""Removes the floating point from 2 number strings by multiplying them in 10 together
 (Useful if you want to turn floating point numbers into integers to do operations on them)
@@ -454,7 +454,7 @@ Examples:
 			return'0'
 		if x==y: #Return '1' if both strings are equal
 			return'1'
-		x,y=removeDecimals(x,y) #Remove the point from both strings by multiplying them in 10
+		x,y=removeDecimals(absstr(x),absstr(y)) #Remove the point from both strings by multiplying them in 10
 		x,y=divideWhole(x,gcd(x,y))[0],divideWhole(y,gcd(x,y))[0] #Simplify the division by removing common factors
 		answer+=divideWhole(x,y)[0] #Append the whole division answer in the answer string
 		x=divideWhole(x,y)[1] #Find the remainder of the division
@@ -498,34 +498,206 @@ Examples:
 					return fixnum(answer.replace('(',''))
 			return fixnum(answer.replace('(',''))if fixnum(answer[answer.find('('):])=='0'else fixnum(answer+')') #Finalize the answer and return it
 		return answer #Return the answer if there's no decimal in it
-	return #Return `None if the operator is invalid
-if __name__=="__main__": #Run an example if this module isn't running as a standalone script
+	return #Return `None` if the operator is invalid
+def isrnum(n):
+	"""Does the same as `isnum(n)` with recursive number support
+
+Note: The recursive decimals are seperated with brackets (For example 3.(3)).
+
+Args:
+	n(str): The string to be checked (Can also be other data types, which will return `False` in that case)
+
+Returns:
+	bool: `True` if the string represents a number, `False` if not
+
+Examples:
+	>>> isrnum('123')
+	True
+
+	>>> isrnum('3.(3)')
+	True
+
+	>>> isrnum('ABC')
+	False
+
+	>>> isrnum(123)
+	False"""
+	if type(n)!=str: #Return false if the parameter isn't a string
+		return False
+	if len(n)<2: #Check if the string represents a whole number if it contains less than 2 characters
+		return n.isdigit()
+	if(('('not in n)^(n[-1]!=')'))or n.find('(')!=n.rfind('(')or n.find(')')!=n.rfind(')'): #Return false if the number of brackets are invalid
+		return False
+	if'('not in n: #Check if the string represents a whole number
+		return isnum(n)
+	if'.'not in n or n.find('.')>n.find(')'): #Return false if the recursive decimal number string is invalid
+		return False
+	if not n[n.find('(')+1:n.find(')')].isdigit(): #Return false if the recursive part is invalid
+		return False
+	return isnum(n.replace('(','').replace(')','')) #Check the complete number without the brackets
+def fixrnum(n):
+	"""Does the same as `fixnum(n)` with recursive number support
+
+Note: The recursive decimals are seperated with brackets (For example 3.(3)).
+
+Args:
+	n(str): The string to be standardized
+
+Returns:
+	str: The standardized version of the given number string (or the same thing if it's already standard)
+
+Examples:
+	>>> fixrnum('123')
+	'123'
+
+	>>> fixnum('-000000000000000.000000000000000(00000000000000000)')
+	'0'"""
+	if'('not in n: #Check the number string as a terminating one if there are no brackets
+		return fixnum(n)
+	sign=n[0]=='-' #Assign the sign indicator
+	n0=n[n.find('(')+1:n.find(')')] #Assign a string which stores the recursive part
+	n=absstr(n[:len(n)-len(n0)-2]) #Set the number string to only the terminating part
+	while(n.find('.')if'.'in n else len(n))>1 and n[0]=='0': #Remove the '0's at the left of the terminating part
+		n=n[1:]
+	if fixnum(n0)=='0': #(The recursive part only contains '0's)
+		if n[-1]=='.': #Remove the point if it's at the right
+			n=n[:len(n)-1]
+		return fixnum('-'*sign+n) #Return only the terminating part
+	if len(n0)>1: #(The recursive part might be able to be shortend)
+		modify=True #Assign a break condition
+		while modify and len(n0)>1: #Shorten the recursive part
+			length=len(n0)//2
+			while length:
+				if len(n0)%length:
+					length-=1
+					continue
+				modify=n0[:length]==n0[len(n0)-length:]
+				i=len(n0)//length-1
+				while modify and i:
+					modify=n0[:length]==n0[length*i-1:length*(i+1)-1]
+					i-=1
+				if modify:
+					n0=n0[:length]
+					break
+				length-=1
+		del modify,length,i #Delete extra objects from this scope
+	while n[-1]==n0[-1]: #Shorten the number string
+		n0=n0[-1]+n0[:len(n0)-1]
+		n=n[:len(n)-1]
+	if n0=='9': #Return 1 more of the terminating part only if the recursive part is only '9'
+		return '-'*sign+returnPoint(addWhole(fixnum(n.replace('.','')),'1'),len(n)-n.find('.')-1)
+	return '-'*sign+n+'('+n0+')' #Return the result
+def rnum2frac(n):
+	"""Turns any rational number string into parts of a fraction stored as strings
+
+Note: The dividend would represent an integer and the divisor a whole number
+
+Args:
+	n(str): The number string to be converted
+
+Returns:
+	(str,str): The dividend & the divisor in order
+
+Examples:
+	>>> rnum2frac('1.2')
+	('12','10')
+
+	>>> rnum2frac('3.(3)')
+	('30','9')"""
+	if'('not in n: #(The number string isn't recursive)
+		return fixnum(n.replace('.','')),'1'+'0'*('.'in n)*(len(n)-n.find('.')-1) #Return the answer
+	else: #(The number string is recursive)
+		sign=n[0]=='-' #Assign the sign indicator
+		n0=n[n.find('(')+1:n.find(')')] #Assign a string which stores the recursive part
+		n=absstr(n[:n.find('(')]) #Set the number string to only the terminating part
+		n1='9'*len(n0)+'0'*(len(n)-n.find('.')-1) #Assign the divisor
+		if n[-1]=='.': #Remove the '.' at the right if it exists
+			n=n[:len(n)-1]
+		return '-'*sign+calculate(calculate(absstr(fixnum(n)),n1,'*'),fixnum(n0),'+'),n1 #Return the answer
+def rcalculate(x,y,operation):
+	"""Does the same as `calculate(x,y,operation)` with recursive number support
+
+Note: The recursive decimals are seperated with brackets (For example 3.(3)).
+
+Args:
+	x(str): The first number string in the operation
+
+	y(str): The second number string in the operation
+
+	operation(str): The operator character
+
+Returns:
+	str|None: The answer in form of a string, or `None` if either the operator isn't
+	valid, or it's dividing by 0
+
+Examples:
+	>>> calculate('2','2','+')
+	'4'
+
+	>>> calculate('10','3','/')
+	'3.(3)'
+
+	>>> calculate('5','1.2','%')
+	'0.2'
+
+	>>> calculate('0.(3)','2','*')
+	'0.(6)'
+
+	>>> calculate('4','5','A')
+	None
+
+	>>> calculate('8','0','/')
+	None
+
+	>>> claculate('53','0','%')
+	None"""
+	if operation!='+'and operation!='-'and operation!='*'and operation!='/'and operation!='%': #Return `None` if the operator is invalid
+		return
+	if(x=='0'or y=='0')and(operation=='+'or operation=='-'): #(At least one of the strings is "0" and the operator is either '+' or '-')
+		if y=='0': #Return the first string if the second string is '0'
+			return x
+		return'-'*(operation=='-'and y!='-')+absstr(y) #Modify the second string and return it if the first string is '0'
+	if y=='0'and(operation=='/'or operation=='%'): #Return `None` if the second number string is '0' and the operator is either '/' or '%'
+		return
+	if y=='1'and(operation=='*'or operation=='/'): #Return the first number string if the second number string is '1' and the operator is either '*' or '/'
+		return x
+	if x=='1'and operation=='*': #Return the second number string if the first number string is '1' and the operator is '*'
+		return y
+	if x==y and(operation=='/'or operation=='%'): #Return either '0' or '1' if both number strings are equal and the operator is either '/' or '%'
+		return '1'if operation=='/'else'0'
+	if'('not in x and'('not in y: #Calculate as terminating numbers if none of the number strings have brackets
+		return calculate(x,y,operation)
+	x,x0=rnum2frac(x) #Convert the first number string into a fraction
+	y,y0=rnum2frac(y) #Convert the second number string into a fraction and then start the calculation
+	if operation!='*'and operation!='/':
+		lcm=divideWhole(calculate(x0,y0,'*'),gcd(x0,y0))[0];
+		return calculate(calculate(calculate(x,divideWhole(lcm,x0)[0],'*'),calculate(y,divideWhole(lcm,y0)[0],'*'),operation),lcm,'/');
+	if operation=='*':
+		return calculate(calculate(x,y,'*'),calculate(x0,y0,'*'),'/');
+	return calculate(calculate(x,y0,'*'),calculate(x0,y,'*'),'/');
+if __name__=="__main__": #Run an example if this module is running as a standalone script
 	while True: #Repeat the following lines forever
-		operation=input() #Prompt for the operation
-		if operation.find('+')>-1: #(The given operator is '+')
-			operator='+' #Store the given operator
-		elif operation.find('-')>-1: #(The given operator is '-')
-			operator='-' #Store the given operator
-		elif operation.find('*')>-1: #(The given operator is '*')
-			operator='*' #Store the given operator
-		elif operation.find('/')>-1: #(The given operator is '/')
-			operator='/' #Store the given operator
-		elif operation.find('%')>-1: #(The given operator is '%')
-			operator='%' #Store the given operator
-		else: #Alert if there's not a valid operator
-			print("Not a valid operator!")
-			continue #Restart the loop
-		operation=operation.split(operator) #Split the operation
-		if len(operation)!=2: #(There are more than 2 numbers)
-			print("Operating on more than 2 numbers isn't supported!")
-			continue #Restart the loop
-		operation[0]=operation[0].strip() #Remove whitespaces from the first splitted string
-		operation[1]=operation[1].strip() #Remove whitespaces from the second splitted string
-		if isnum(operation[0])and isnum(operation[1]): #(Both strings represent numbers)
-			operation=calculate(fixnum(operation[0]),fixnum(operation[1]),operator) #Do the operation
-			if operation==None: #Alert if the operation divides a number by 0
-				print("Cannot divide by 0!")
-			else: #Print the answer
+		notFirst=False #Assign a boolean object
+		x='' #Assign the first number string with an empty string
+		operator=None #Assign the operator character with `None`
+		while not operator: #Read until a valid operator is found
+			operation=input().strip() #Get input from the user
+			while operation: #Write the input to the first number string character by character until a valid operator is found
+				if operation[0]=='+'or(operation[0]=='-'and notFirst)or operation[0]=='*'or operation[0]=='/'or operation[0]=='%': #(A valid operator is found)
+					operator=operation[0] #Store the operator
+					break #Break
+				x+=operation[0] #Write to the first number string
+				notFirst=True #Re-assign the boolean object
+				operation=operation[1:] #Reduce 1 character from the left of the input string
+		x.strip() #Remove leading/trailing whitespace from the first number string
+		y=operation[1:].strip() #Write the rest of the input string to the second number string
+		while not y: #Keep writing until a valid string is found
+			y=input().strip()
+		if isrnum(x)and isrnum(y): #(Both strings represent numbers)
+			operation=rcalculate(fixrnum(x),fixrnum(y),operator) #Do the operation
+			if operation: #Print the answer
 				print(operation)
+			else: #Alert if the operation divides a number by 0
+				print("Cannot divide by 0!")
 		else: #Alert which string doesn't represent a number
-			print("The",("first & the third input aren't numbers"if not isnum(operation[0])and not isnum(operation[1])else("first"if isnum(operation[1])else"third")+" input isn't a number")+'!')
+			print("The",("first & the third input aren't numbers"if not isrnum(x)and not isrnum(y)else("first"if isrnum(y)else"third")+" input isn't a number")+'!')
