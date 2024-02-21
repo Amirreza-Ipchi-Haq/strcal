@@ -59,7 +59,7 @@ String strcal::fixnum(String n){//Assign a function which turns a number string 
 String strcal::returnPoint(String n,const size_t posFromRight){//Assign a function which returns '.' back to a string
 	if(!posFromRight)//Return the original string if the position of '.' to be put from the right is 0
 		return n;
-	return fixnum((n.length()>posFromRight?n.substring(0,n.length()-posFromRight):"0")+"."+n.substring(n.length()-posFromRight));//Return the string with the '.' back
+	return fixnum(mltstr((n.length()>posFromRight?n.substring(0,n.length()-posFromRight):"0")+".","0",n.length()<posFromRight?posFromRight-n.length():0)+n.substring(n.length()-posFromRight));//Return the string with the '.' back
 }
 void strcal::swapstr(String &a,String &b){//Assign a function which swaps 2 strings
 	String tmp=a;//Assign a temporary string with the value of the first string
@@ -106,7 +106,7 @@ uint8_t strcal::cmpstr(String a,String b){//Assign a function which compares str
 	return 0;//Return 0 indicating that both strings are exactly the same
 }
 uint8_t strcal::mod10(const int8_t n){//Assign a function which finds mod10
-	return n<0?10+n%10:n%10;//Return the answer
+	return n%10<0?10+n%10:n%10;//Return the answer
 }
 String strcal::subtractWhole(String x,String y){//Assign a function which subtracts a whole number from another as strings
 	if(y=="0")//Return the first string if the second string is "0"
@@ -202,13 +202,13 @@ String strcal::calculate(String x,String y,const char operation){//Assign the fu
 				return "0";
 			if(x=="1"||y=="1")//(One of the strings is "1")
 				return x=="1"?y:x;//Return the either string that isn't "1"
-			{//(Has local variables
+			{//(Has local variables)
 				String answer0;//Assign the sub-answer string
 				char add0=0,add1,sign=(x[0]=='-')^(y[0]=='-');//Assign the first addition variable, the second addition variable & the sign indicator
 				x=fixnum(rmstr(absstr(x),".")),y=fixnum(rmstr(absstr(y),"."));//Remove '.' & '-' from both strings
 				for(size_t i=x.length();i--;answer=addWhole(answer,(add0?String(int8_t(add0)):"")+answer0),add0=0,answer0=mltstr("","0",x.length()-i))//Do the multiplication digit by digit
 					for(size_t j=y.length();j--;add1=(x[i]-'0')*(y[j]-'0'),answer0=char((add0+add1)%10+'0')+answer0,add0=(add0+add1)/10);
-				return returnPoint(mltstr(sign?"-":"","0",divide)+answer,divide);//Return the answer if the sign & the floating point back
+				return returnPoint((sign?"-":"")+answer,divide);//Return the answer if the sign & the floating point back
 			}
 		case '%'://Find the remainder
 			if(y=="0")//Break out of the switch-case statement if the second string is "0" (which is invalid)
@@ -255,4 +255,88 @@ String strcal::calculate(String x,String y,const char operation){//Assign the fu
 			return fixnum(answer);//Return the standard form of the answer
 	}
 	return "";//Return an empty string if the operation is invalid
+}
+bool strcal::isrnum(String n){//Assign a function same as `isnum` with recursive number support
+	if(!n.length())//Return 0 which indicates as false if the string is empty
+		return 0;
+	if(n.length()<2)//Check if the string represents a whole number if it contains less than 2 characters
+		return isWhole(n);
+	if(((!strExists(n,"("))^!n.endsWith(")"))||n.indexOf('(')!=n.lastIndexOf('(')||n.indexOf(')')!=n.lastIndexOf(')'))//Return 0 which indicates as false if the string has a bracket with no matching pair or there are more than 2 brackets
+		return 0;
+	if(!strExists(n,"("))//Check the number string as a terminating one if it has no brackets
+		return isnum(n);
+	if(!strExists(n,".")||n.indexOf('.')>n.indexOf('('))//Return 0 which indicates as false if the bracket position is invalid
+		return 0;
+	if(!isWhole(n.substring(n.indexOf('(')+1,n.indexOf(')'))))//Return 0 which indicates as false if the recursion is invalid
+		return 0;
+	return isnum(rmstr(rmstr(n,"("),")"));//Check the number string without brackets
+}
+String strcal::fixrnum(String n){//Assign a function same as `fixnum` with recursive number support
+	if(!strExists(n,"("))//Check the number string as a terminating one if it contains no brackets
+		return fixnum(n);
+	char sign=n[0]==0;//Assign the sign indicator
+	String n0=n.substring(n.indexOf('(')+1,n.indexOf(')')),n1=absstr(n.substring(0,n.length()-n0.length()-2));//Divide the number string into two parts by assigning 2 strings
+	while((strExists(n1,".")?n1.indexOf('.')-1:n1.length())>1&&n1[0]=='0')//Remove the '0's from the left in the terminating part
+		n1.remove(0,1);
+	if(fixnum(n0)=="0"){//Return only the terminating part if the recursive part contains only '0's
+		if(n1.endsWith("."))
+			n1.remove(n1.length()-1);
+		return fixnum((sign?"-":"")+n1);
+	}
+	for(char modify=1;modify&&n0.length()>1;)//Shorten the recursive part
+		for(size_t len=n0.length()/2;len;len--){
+			if(n0.length()%len)
+				continue;
+			modify=n0.substring(0,len)==n0.substring(n0.length()-len);
+			for(size_t i=n0.length()/len-1;modify&&--i;modify=n0.substring(0,len)==n0.substring(len*i-1,len*(i+1)-1));
+			if(modify){
+				n0=n0.substring(0,len);
+				break;
+			}
+		}
+	while(n0.endsWith(String(n1[n1.length()-1])))//Shorten the number string as much as possible
+		n0=String(n0[n0.length()-1])+n0.substring(0,n0.length()-1),n1=n1.substring(0,n1.length()-1);
+	if(n0=="9")//Return 1 more of the terminating part only if the recursive part is only "9"
+		return (sign?"-":"")+returnPoint(addWhole(fixnum(rmstr(n,".")),"1"),n.length()-n.indexOf('.')-1);
+	return (sign?"-":"")+n1+"("+n0+")";//Return the result
+}
+void strcal::rnum2frac(String n,String &dividend,String &divisor){//Assign a function which turns number strings into parts of a fraction
+	if(!strExists(n,"("))//(The number string isn't recursive)
+		divisor=mltstr("1","0",strExists(n,".")?n.length()-n.indexOf('.')-1:0),dividend=fixnum(rmstr(n,"."));
+	else{//(The number string is recursive)
+		char sign=n[0]=='-';//Assign the sign indicator
+		dividend=n.substring(0,n.indexOf('(')),n=n.substring(n.indexOf('(')+1,n.indexOf(')'));//Divide the number string into 2 parts
+		if(dividend.endsWith("."))
+			dividend.remove(dividend.length()-1);
+		divisor=mltstr(mltstr("","9",n.length()),"0",strExists(dividend,".")?dividend.length()-dividend.indexOf('.')-1:0),dividend=(sign?"-":"")+calculate(calculate(absstr(fixnum(dividend)),divisor,'*'),fixnum(n),'+');//Set the dividend & the divisor to their actual value
+	}
+	return;
+}
+String strcal::rcalculate(String x,String y,char operation){//Assign a function same as `calculate` with recursive number support
+	if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='/'&&operation!='%')//Return an empty string if the operator is invalid
+		return "";
+	if((x=="0"||y=="0")&&(operation=='+'||operation=='-')){//(At least one of the strings is "0" and the operator is either '+' or '-')
+		if(y=="0")//Return the first string if the second string is "0"
+			return x;
+		return(operation=='-'&&y[0]!='-'?"-":"")+absstr(y);//Modify the second string and return it if the first string is "0"
+	}
+	if(y=="0"&&(operation=='/'||operation=='%'))//Return an empty string if the second number string is "0" and the operator is either '/' or '%'
+		return "";
+	if(y=="1"&&(operation=='*'||operation=='/'))//Return the first number string if the second number string is "1" and the operator is either '*' or '/'
+		return x;
+	if(x=="1"&&operation=='*')//Return the second number string if the first number string is "1" and the operator is '*'
+		return y;
+	if(x==y&&(operation=='/'||operation=='%'))//Return either "0" or "1" if both number strings are equal and the operator is either '/' or '%'
+		return operation=='/'?"1":"0";
+	if(!strExists(x,"(")&&!strExists(y,"("))//Calculate as terminating numbers if none of the number strings have brackets
+		return calculate(x,y,operation);
+	String x0,y0;//Assign the divisors (The strings would now be called dividends)
+	rnum2frac(x,x,x0),rnum2frac(y,y,y0);//Turn the number strings into fractions and start the calculation
+	if(operation!='*'&&operation!='/'){
+		String lcm=divideWhole(calculate(x0,y0,'*'),gcd(x0,y0),0);
+		return calculate(calculate(calculate(x,divideWhole(lcm,x0,0),'*'),calculate(y,divideWhole(lcm,y0,0),'*'),operation),lcm,'/');
+	}
+	if(operation=='*')
+		return calculate(calculate(x,y,'*'),calculate(x0,y0,'*'),'/');
+	return calculate(calculate(x,y0,'*'),calculate(x0,y,'*'),'/');
 }
