@@ -67,13 +67,13 @@ You first include the standard input/output library besides `cstrcal.h`. Then we
 >[!NOTE]
 >This program is written in way so it'll read strings at any length. You'll figure out how.
 
-Then, we check if the given operator is valid and alert if it isn't. After that, we check if both strings represent numbers and alert if at least one of them doesn't. Then, we turn numbers stored as strings to their standard form before we do operation on them.
+Then, we check if both strings represent numbers and alert if at least one of them doesn't. After that, we turn numbers stored as strings to their standard form before we do operation on them.
 >[!IMPORTANT]
 >The strings must be always checked if they represent numbers and then standardized before they're given to do operations on them. Unless, you might experience an undefined behaviour.
 
 You might notice that there's an extra argument in some functions, including the second argument in the `fixnum` and the forth argument in the `calculate` function. That's the `release` argument used to tell if the given string(s) need to be freed or not. We'll talk about that later.
 
-Most functions in this library which have a `char*` return type return a string allocated in the heap, or `NULL` if the given argumants are invalid. The `calculate` function is one of them, and retuns `NULL` if the given operator is invalid, or it's dividing by 0. Since we know that the operator is valid, the only reason it can return `NULL` is dividing by 0. If it returns a string, we print the string. Unless, we alert that we cannot divide by 0. Finally, we print a newline in case if the program is running in the command prompt/terminal (If you don't get its use, you can simply ignore its existance).
+Most functions in this library which have a `char*` return type return a string allocated in the heap, or `NULL` if the given argumants are invalid. The `calculate` function is one of them, and retuns `NULL` if the given operator is invalid, or it's dividing by 0. Since we know that the operator is valid, the only reason it can return `NULL` is dividing by 0. If it returns a string, we print the string. Unless, we alert that we cannot divide by 0. Finally, we print a newline.
 >[!TIP]
 > You can also replace `isnum` with `isrnum`, `fixnum` with `fixrnum` and `calculate` with `rcalculate` in order to support recursive numbers (such as `0.(3)` which is basically `1/3`) as inputs.
 
