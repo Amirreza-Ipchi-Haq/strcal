@@ -9,7 +9,7 @@ This module/library is portable. It doesn't require installing and is independen
 To install this library for Arduino IDE, you can do the following steps:
 * Download the repository (either from the code section as a `.zip` file, or using a Git software such as Git or Github CLI)
 * Extract the files from the zip file if you downloaded the repository as `.zip`
-* Go to the `CPP_ForArduino` directory in the downloaded repository files
+* Go to the `CPlusPlus_ForArduino` directory in the downloaded repository files
 * Copy the `strcal` directory to the IDE's library directory in the IDE's sketchbook directory (For Windows, it's in `%UserProfile%\Documents\Arduino\libraries`, for macOS, it's in `~/Documents/Arduino` and for GNU+Linux, it's in `~/Arduino` (I cannot list all operating systems available, such as FreeBSD. You can find it yourself)).
 
 Now you can use the library by using `#include<strcal.h>`
