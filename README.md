@@ -19,14 +19,14 @@ This module/library uses the same method which is taught at elementary school on
 I was calculating big numbers and saw that my small calculator wasn't able to show the full number, so I've decided to calculate it by hand when randomly this idea came into my head.
 
 The reason this is a library (and not a program) is that I didn't know what uses it could have. I've turned it into a library so others could use it too.
-## Guide
+## Documentation
 If you want to learn how to use this library, these links can be helpful:
 |Language|Documentation Link|Reference Link|
 |-|-|-|
-|C|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Reference.md)|
-|C++|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP/Reference.md)|
-|C++ for Arduino|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP_ForArduino/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/CPP_ForArduino/Reference.md)|
-|Python3|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/Python3/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/Python3/Reference.md)|
+|C|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/C/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/C/Reference.md)|
+|C++|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/CPP/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/CPP/Reference.md)|
+|C++ for Arduino|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/CPP_ForArduino/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/CPP_ForArduino/Reference.md)|
+|Python3|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/Python3/Documentation.md)|[Link](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/Python3/Reference.md)|
 
 ## Contact
 If you want to give your feedback about this module/library (e.g. You've found bugs, or you want more features), you can [email me](mailto:ipchia3@gmail.com) about it (My email address is visible under my profile if you're signed in to GitHub).
