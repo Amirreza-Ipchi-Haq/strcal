@@ -4,7 +4,7 @@ String input,x,y;//Assign 3 strings which the first one stores the input and the
 char operation;//Assign the operator character
 void setup(){
 	Serial.begin(9600);//Setup serial communication at 9600 bits per second (Default baud rate)
-  	return;
+	return;
 }
 void loop(){
 	x="",y="";//Clears both number strings
