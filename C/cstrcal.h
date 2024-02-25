@@ -91,10 +91,10 @@ char isnum(char* n){//Assign a function which checks if a string represents a nu
 	if(strlen(n)<2)//Check the number string if it only contains 1 character
 		return isWhole(n);//Return the result
 	char isNegative=n[0]=='-';//Assign the negativity indicator
-	if(n[isNegative]<'0'||n[isNegative]>'9'||n[strlen(n)-1]<'0'||n[strlen(n)-1]>'9')//Return 0 which indicates as false if the string doesn't represent a number (Check the beginning & the end)
+	if(n[(size_t)isNegative]<'0'||n[(size_t)isNegative]>'9'||n[strlen(n)-1]<'0'||n[strlen(n)-1]>'9')//Return 0 which indicates as false if the string doesn't represent a number (Check the beginning & the end)
 		return 0;
 	char reachedPoint=0;//Assign the point indicator
-	for(size_t i=strlen(n)-1;--i>isNegative;)//Check every digit
+	for(size_t i=strlen(n)-1;--i>(unsigned short)isNegative;)//Check every digit
 		if(n[i]=='.'){//(Reached the point)
 			if(reachedPoint)//Return 0 which indicates as false if a point was already found
 				return 0;
