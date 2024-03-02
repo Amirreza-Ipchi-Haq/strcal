@@ -41,11 +41,11 @@ int main(){
 				printf("Cannot divide by zero!");
 		}else{//Alerts if at least one string isn't a number
 			if(isrnum(x))
-				printf("The third input isn't a number!");
+				printf("The second operand isn't a number!");
 			else if(isrnum(y))
-				printf("The first input isn't a number!");
+				printf("The first operand isn't a number!");
 			else
-				printf("The first & the third inputs aren't numbers!");
+				printf("The first & the second operands aren't numbers!");
 			free(x);
 			free(y);
 		}
