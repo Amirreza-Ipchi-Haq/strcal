@@ -600,10 +600,10 @@ Returns:
 
 Examples:
 	>>> rnum2frac('1.2')
-	('12','10')
+	('6','5')
 
 	>>> rnum2frac('3.(3)')
-	('30','9')"""
+	('10','3')"""
 	if'('not in n: #(The number string isn't recursive)
 		return fixnum(n.replace('.','')),'1'+'0'*('.'in n)*(len(n)-n.find('.')-1) #Return the answer
 	else: #(The number string is recursive)
@@ -613,7 +613,10 @@ Examples:
 		n1='9'*len(n0)+'0'*(len(n)-n.find('.')-1) #Assign the divisor
 		if n[-1]=='.': #Remove the '.' at the right if it exists
 			n=n[:len(n)-1]
-		return '-'*sign+calculate(calculate(absstr(fixnum(n)),n1,'*'),fixnum(n0),'+'),n1 #Return the answer
+		n='-'*sign+calculate(calculate(absstr(fixnum(n)),n1,'*'),fixnum(n0),'+')
+		if n!="0":
+			n,n1=divideWhole(n,gcd(n,n1))[0],divideWhole(n1,gcd(n,n1))[0]
+		return n,n1 #Return the answer
 def rcalculate(x,y,operation):
 	"""Does the same as `calculate(x,y,operation)` with recursive number support
 
