@@ -310,6 +310,10 @@ void strcal::rnum2frac(String n,String &dividend,String &divisor){//Assign a fun
 			dividend.remove(dividend.length()-1);
 		divisor=mltstr(mltstr("","9",n.length()),"0",strExists(dividend,".")?dividend.length()-dividend.indexOf('.')-1:0),dividend=(sign?"-":"")+calculate(calculate(absstr(fixnum(dividend)),divisor,'*'),fixnum(n),'+');//Set the dividend & the divisor to their actual value
 	}
+	if(dividend!="0"){
+		String divide=gcd(dividend,divisor);
+		dividend=divideWhole(dividend,divide,0),divisor=divideWhole(divisor,divide,0);
+	}
 	return;
 }
 String strcal::rcalculate(String x,String y,char operation){//Assign a function same as `calculate` with recursive number support
