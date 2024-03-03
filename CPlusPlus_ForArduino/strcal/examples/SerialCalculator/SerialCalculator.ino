@@ -29,6 +29,6 @@ void loop(){
 		else//Shows the answer
 			Serial.println(x);
 	}else//Tells which numbers are invalid
-		Serial.println(strcal::isrnum(x)^strcal::isrnum(y)?strcal::isrnum(x)?"The first input isn't a number!":"The third input isn't a number!":"The first & the third input aren't numbers!");
+		Serial.println(strcal::isrnum(x)^strcal::isrnum(y)?strcal::isrnum(x)?"The first operand isn't a number!":"The second operand isn't a number!":"The first & the second operands aren't numbers!");
 	return;
 }
