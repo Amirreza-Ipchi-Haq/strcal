@@ -531,6 +531,10 @@ void rnum2frac(char* n,char** dividend,char** divisor,char release){//Assign a f
 			*dividend=strntmp(*dividend,strlen(*dividend)-1,1);
 		*dividend=strappend(CHR2STR(sign),calculate(calculate(absstr(fixnum(*dividend,1),1),*divisor,'*',2),fixnum(n0,1),'+',3),1);
 	}
+	if(*dividend[0]!='0'){
+		char *divide=gcd(*dividend,*divisor,0);
+		*dividend=divideWhole(*dividend,divide,0,2),*divisor=divideWhole(*divisor,divide,0,3);
+	}
 	return;
 }
 char* rcalculate(char* x,char* y,char operation,char release){//Assign a function same as `calculate` with recursive number support
