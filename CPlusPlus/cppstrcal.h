@@ -307,6 +307,10 @@ namespace strcal{
 				dividend.pop_back();
 			divisor=mltstr(mltstr("","9",n.size()),"0",strExists(dividend,".")?dividend.size()-dividend.find('.')-1:0),dividend=(sign?"-":"")+calculate(calculate(absstr(fixnum(dividend)),divisor,'*'),fixnum(n),'+');//Set the dividend & the divisor to their actual value
 		}
+		if(dividend!="0"){
+			std::string divide=gcd(dividend,divisor);
+			dividend=divideWhole(dividend,divide,0),divisor=divideWhole(divisor,divide,0);
+		}
 		return;
 	}
 	std::string rcalculate(std::string x,std::string y,char operation){//Assign a function same as `calculate` with recursive number support
