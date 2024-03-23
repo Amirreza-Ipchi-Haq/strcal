@@ -316,7 +316,7 @@ void strcal::rnum2frac(String n,String &dividend,String &divisor){//Assign a fun
 	}
 	return;
 }
-String strcal::rcalculate(String x,String y,char operation){//Assign a function same as `calculate` with recursive number support
+String strcal::rcalculate(String x,String y,const char operation){//Assign a function same as `calculate` with recursive number support
 	if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='/'&&operation!='%')//Return an empty string if the operator is invalid
 		return "";
 	if((x=="0"||y=="0")&&(operation=='+'||operation=='-')){//(At least one of the strings is "0" and the operator is either '+' or '-')
