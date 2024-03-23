@@ -485,7 +485,7 @@ char isrnum(char* n){//Assign a function same as `isnum` with recursive number s
 	free(n0);//Free the string
 	return 0;//Return 0 which indicates as false if the number string is invalid itself
 }
-char* fixrnum(char* n,char release){//Assign a function same as `fixnum` with recursive number support
+char* fixrnum(char* n,const char release){//Assign a function same as `fixnum` with recursive number support
 	if(!strchr(n,'('))//Check the number string as a terminating one if it contains no brackets
 		return fixnum(n,release);
 	char sign=n[0]=='-'?'-':0,*n0=strnrtmp(n,strlen(strchr(n,'('))-1,0),*n1=strntmp(n,strlen(n)-strlen(n0)-1,release);//Assign the sign indicator, the recursive part & the terminating part
@@ -521,7 +521,7 @@ char* fixrnum(char* n,char release){//Assign a function same as `fixnum` with re
 		n0=mltstr(strappend(CHR2STR(n0[strlen(n0)-1]),strntmp(n0,strlen(n0)-1,0),1),n0,0,3),n1=strntmp(n1,strlen(n1)-1,1);	
 	return strappend(CHR2STR(sign),strappend(strappend(strappend(n1,"(",2),n0,3),")",2),1);//Return the result
 }
-void rnum2frac(char* n,char** dividend,char** divisor,char release){//Assign a function which converts number strings to fraction
+void rnum2frac(char* n,char** dividend,char** divisor,const char release){//Assign a function which converts number strings to fraction
 	if(!strchr(n,'('))//(The number string isn't recursive)
 		*divisor=mltstr("1","0",strchr(n,'.')?strlen(strchr(n,'.'))-1:0,0),*dividend=fixnum(rmchr(n,'.',release),1);
 	else{//(The number string is recursive)
@@ -537,14 +537,14 @@ void rnum2frac(char* n,char** dividend,char** divisor,char release){//Assign a f
 	}
 	return;
 }
-char* rcalculate(char* x,char* y,char operation,char release){//Assign a function same as `calculate` with recursive number support
+char* rcalculate(char* x,char* y,const char operation,const char release){//Assign a function same as `calculate` with recursive number support
 	if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='/'&&operation!='%')//Return `NULL` if the operator is invalid
 		return 0;
 	if(((x[0]<'1'&&strlen(x)<2)||(y[0]<'1'&&strlen(y)<2))&&(operation=='+'||operation=='-')){//(At least one of the number strings is "0" and the operator is either '+' or '-')
 		if(y[0]=='0'&&strlen(y)<2){//(The second number string is "0")
 			if(release&1)//Free the second number string if told to
 				free(y);
-			return strtmp(x,release&2);//Return the first number string and free it afterwards if told to
+			return strtmp(x,release&2);//Return the first number string and free i	t afterwards if told to
 		}//(The second number string is "0")
 		if(release&2)//Free the first number string if told to
 			free(x);
