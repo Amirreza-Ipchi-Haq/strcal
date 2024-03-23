@@ -23,6 +23,6 @@ namespace strcal{
 	bool isrnum(String n);
 	String fixrnum(String n);
 	void rnum2frac(String n,String &dividend,String &divisor);
-	String rcalculate(String x,String y,char operation);
+	String rcalculate(String x,String y,const char operation);
 }
 #endif
