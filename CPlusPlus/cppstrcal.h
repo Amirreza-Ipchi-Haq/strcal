@@ -313,7 +313,7 @@ namespace strcal{
 		}
 		return;
 	}
-	std::string rcalculate(std::string x,std::string y,char operation){//Assign a function same as `calculate` with recursive number support
+	std::string rcalculate(std::string x,std::string y,const char operation){//Assign a function same as `calculate` with recursive number support
 		if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='/'&&operation!='%')//Return an empty string if the operator is invalid
 			return "";
 		if((x=="0"||y=="0")&&(operation=='+'||operation=='-')){//(At least one of the strings is "0" and the operator is either '+' or '-')
