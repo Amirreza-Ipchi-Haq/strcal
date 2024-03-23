@@ -90,4 +90,4 @@ But what if the function needed 2 strings as an input (like `calculate`, for exa
 
 You might notice that the `release` argument is treated like a binary number in this case. The first bit from the left indicates if the first string needs to be freed, and the second bit does the same to the second string.
 ## Reference
-If you want to view the list of all functions, you can use this [reference](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Guide/C/Reference.md).
+If you want to view the list of all functions, you can use this [reference](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/C/Reference.md).
