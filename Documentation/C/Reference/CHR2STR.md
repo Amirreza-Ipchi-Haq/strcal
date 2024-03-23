@@ -5,8 +5,8 @@ This macro takes a character and converts it to a string in form of a static arr
 #include<stdio.h>
 #include"cstrcal.h"
 int main(){
-        printf("%s\n",CHR2STR('C'));
-        return 0;
+	printf("%s\n",CHR2STR('C'));
+	return 0;
 }
 ```
 In this example, we print the character `'C'` in form of a string.
