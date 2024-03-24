@@ -3,7 +3,7 @@ This function returns a duplicated string from `s` allocated in the heap. It fun
 ## Arguments
 * `char* s`: The string to be duplicated
 * `const char release`: The argument indicating that `s` needs to be freed or not (Read the [documentation](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/C/Documentation.md#about-the-release-argument) for more information)
-## Return value
+## Return Value
 The string with the value of `s` allocated in the heap
 ## Example
 ```c
