@@ -19,7 +19,7 @@ This module/library uses the same method which is taught at elementary school on
 I was calculating big numbers and saw that my small calculator wasn't able to show the full number, so I've decided to calculate it by hand when randomly this idea came into my head.
 
 The reason this is a library (and not a program) is that I didn't know what uses it could have. I've turned it into a library so others could use it too.
-## Documentation
+## Documentation (Not ready yet)
 If you want to learn how to use this library, these links can be helpful:
 |Language|Documentation Link|Reference Link|
 |-|-|-|
