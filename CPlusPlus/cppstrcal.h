@@ -62,7 +62,7 @@ namespace strcal{
 		if(!posFromRight)//Return the original string if the position of '.' to be put from the right is 0
 			return n;
 		n.insert(n[0]=='-',mltstr("","0",posFromRight>=n.size()?posFromRight-n.size()+(n[0]=='-')+1:0));//Put extra '0's at the back
-		return n.insert(n.size()-posFromRight,".");//Return the string with the '.' back
+		return fixnum(n.insert(n.size()-posFromRight,"."));//Return the string with the '.' back
 	}
 	void removeDecimals(std::string &x,std::string &y){//Assign a function which removes the floating point by multiplying both numbers by 10
 		if(strExists(x,".")&&!strExists(y,"."))//Add '0's with the number of decimals in the first string to the second string and remove the '.' from the first one if the first string contains '.' and the second string doesn't
