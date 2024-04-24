@@ -179,11 +179,11 @@ Examples:
 		x,y=y,x
 	for i in range(len(x))[::-1]: #Do the addition digit by digit
 		if i<len(x)-len(y):
-			answer=str((ord(x[i])-ord('0')+add)%10)+answer
-			add=(ord(x[i])-ord('0')+add)>9
+			answer=str((int(x[i])+add)%10)+answer
+			add=(int(x[i])+add)>9
 		else:
-			answer=str((ord(x[i])+ord(y[i-(len(x)-len(y))])-2*ord('0')+add)%10)+answer
-			add=(ord(x[i])+ord(y[i-(len(x)-len(y))])-2*ord('0')+add)>9
+			answer=str((int(x[i])+int(y[i-(len(x)-len(y))])+add)%10)+answer
+			add=(int(x[i])+int(y[i-(len(x)-len(y))])-2*int('0')+add)>9
 	return'1'*add+answer #Return the result
 def cmpstr(a,b):
 	"""Compares 2 strings based on their length and then their value
@@ -245,11 +245,11 @@ Examples:
 		x,y=y,x
 	for i in range(len(x))[::-1]: #Do the subtraction digit by digit
 		if i<len(x)-len(y):
-			answer=str((ord(x[i])-ord('0')-subtract)%10)+answer
-			subtract=ord(x[i])-ord('0')-subtract<0
+			answer=str((int(x[i])-subtract)%10)+answer
+			subtract=int(x[i])-subtract<0
 		else:
-			answer=str((ord(x[i])-ord(y[i-(len(x)-len(y))])-subtract)%10)+answer
-			subtract=ord(x[i])-ord(y[i-(len(x)-len(y))])-subtract<0
+			answer=str((int(x[i])-int(y[i-(len(x)-len(y))])-subtract)%10)+answer
+			subtract=int(x[i])-int(y[i-(len(x)-len(y))])-subtract<0
 	return fixnum(sign+answer) #Return the result with the sign back
 def simpleWholeDivide(x,y):
 	"""Divides 2 whole number strings by each other in a simple form and
@@ -435,7 +435,7 @@ Examples:
 		y=fixnum(absstr(y).replace('.','')) #Do the same thing above to the second string
 		for i in range(len(x))[::-1]: #Do the multiplication digit by digit
 			for j in y[::-1]:
-				add0=(ord(x[i])-ord('0'))*(ord(j)-ord('0'))
+				add0=int(x[i])*int(j)
 				answer0=str((add+add0)%10)+answer0
 				add=(add+add0)//10
 			answer=addWhole(answer,(str(add)if add else'')+answer0)
@@ -477,7 +477,7 @@ Examples:
 					if x=='0': #Return the current answer string in case that the remainder is '0'
 						return fixnum(answer)
 			else: #(The temporary string isn't divisible by '5')
-				while(ord(tmp[-1])-ord('0'))%2<1: #Continue the division digit by digit and divide the temporary string by 2 until it's not divisible by that number
+				while int(tmp[-1])%2<1: #Continue the division digit by digit and divide the temporary string by 2 until it's not divisible by that number
 					tmp=divideWhole(tmp,'2')[0] #Divide the temporary string in 2
 					x+='0' #Append '0' to the remainder string
 					answer+=simpleWholeDivide(x,y)[0] #Find the whole answer of the new division as a string and append it to the answer string
