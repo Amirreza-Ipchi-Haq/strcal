@@ -177,6 +177,50 @@ String strcal::gcd(String x,String y){//Assign a function which finds the greate
 		tmp=divideWhole(x,y,1),y=divideWhole(y,x,1),x=tmp;
 	return x=="0"?y:x;//Return the non-"0" string
 }
+bool strcal::isrnum(String n){//Assign a function same as `isnum` with recursive number support
+	if(!n.length())//Return 0 which indicates as false if the string is empty
+		return 0;
+	if(n.length()<2)//Check if the string represents a whole number if it contains less than 2 characters
+		return isWhole(n);
+	if(((!strExists(n,"("))^!n.endsWith(")"))||n.indexOf('(')!=n.lastIndexOf('(')||n.indexOf(')')!=n.lastIndexOf(')'))//Return 0 which indicates as false if the string has a bracket with no matching pair or there are more than 2 brackets
+		return 0;
+	if(!strExists(n,"("))//Check the number string as a terminating one if it has no brackets
+		return isnum(n);
+	if(!strExists(n,".")||n.indexOf('.')>n.indexOf('('))//Return 0 which indicates as false if the bracket position is invalid
+		return 0;
+	if(!isWhole(n.substring(n.indexOf('(')+1,n.indexOf(')'))))//Return 0 which indicates as false if the recursion is invalid
+		return 0;
+	return isnum(rmstr(rmstr(n,"("),")"));//Check the number string without brackets
+}
+String strcal::fixrnum(String n){//Assign a function same as `fixnum` with recursive number support
+	if(!strExists(n,"("))//Check the number string as a terminating one if it contains no brackets
+		return fixnum(n);
+	char sign=n[0]==0;//Assign the sign indicator
+	String n0=n.substring(n.indexOf('(')+1,n.indexOf(')')),n1=absstr(n.substring(0,n.length()-n0.length()-2));//Divide the number string into two parts by assigning 2 strings
+	while((strExists(n1,".")?n1.indexOf('.')-1:n1.length())>1&&n1[0]=='0')//Remove the '0's from the left in the terminating part
+		n1.remove(0,1);
+	if(fixnum(n0)=="0"){//Return only the terminating part if the recursive part contains only '0's
+		if(n1.endsWith("."))
+			n1.remove(n1.length()-1);
+		return fixnum((sign?"-":"")+n1);
+	}
+	for(char modify=1;modify&&n0.length()>1;)//Shorten the recursive part
+		for(size_t len=n0.length()/2;len;len--){
+			if(n0.length()%len)
+				continue;
+			modify=n0.substring(0,len)==n0.substring(n0.length()-len);
+			for(size_t i=n0.length()/len-1;modify&&--i;modify=n0.substring(0,len)==n0.substring(len*i-1,len*(i+1)-1));
+			if(modify){
+				n0=n0.substring(0,len);
+				break;
+			}
+		}
+	while(n0.endsWith(String(n1[n1.length()-1])))//Shorten the number string as much as possible
+		n0=String(n0[n0.length()-1])+n0.substring(0,n0.length()-1),n1=n1.substring(0,n1.length()-1);
+	if(n0=="9")//Return 1 more of the terminating part only if the recursive part is only "9"
+		return (sign?"-":"")+returnPoint(addWhole(fixnum(rmstr(n,".")),"1"),n.length()-n.indexOf('.')-1);
+	return (sign?"-":"")+n1+"("+n0+")";//Return the result
+}
 String strcal::calculate(String x,String y,const char operation){//Assign the function which calculates 2 numbers with a given operator
 	String answer=operation=='*'?"0":operation=='/'&&((x[0]=='-')^(y[0]=='-'))?"-":"";//Assign the answer string
 	const size_t divide=operation=='+'||operation=='-'||operation=='*'||operation=='%'?!strExists(x,".")&&!strExists(y,".")?0:strExists(x,".")&&!strExists(y,".")?x.length()-x.indexOf('.')-1:!strExists(x,".")&&strExists(y,".")?y.length()-y.indexOf('.')-1:operation=='*'?x.length()+y.length()-x.indexOf('.')-y.indexOf('.')-2:x.length()-x.indexOf('.')>y.length()-y.indexOf('.')?x.length()-x.indexOf('.')-1:y.length()-y.indexOf('.')-1:0;//Assign the division variable for returning the floating point (usless for division)
@@ -249,56 +293,12 @@ String strcal::calculate(String x,String y,const char operation){//Assign the fu
 						answer=rmstr(answer,"(");//(Removement part)
 						goto finish;//(Skipping part)
 					}
-				answer=fixnum(answer.substring(answer.indexOf('(')+1))=="0"?fixnum(rmstr(answer,"(")):answer+")";//Finalize the answer string
+				answer=fixrnum(answer.substring(answer.indexOf('(')+1))=="0"?fixnum(rmstr(answer,"(")):answer+")";//Finalize the answer string
 			}
 			finish:
 			return fixnum(answer);//Return the standard form of the answer
 	}
 	return "";//Return an empty string if the operation is invalid
-}
-bool strcal::isrnum(String n){//Assign a function same as `isnum` with recursive number support
-	if(!n.length())//Return 0 which indicates as false if the string is empty
-		return 0;
-	if(n.length()<2)//Check if the string represents a whole number if it contains less than 2 characters
-		return isWhole(n);
-	if(((!strExists(n,"("))^!n.endsWith(")"))||n.indexOf('(')!=n.lastIndexOf('(')||n.indexOf(')')!=n.lastIndexOf(')'))//Return 0 which indicates as false if the string has a bracket with no matching pair or there are more than 2 brackets
-		return 0;
-	if(!strExists(n,"("))//Check the number string as a terminating one if it has no brackets
-		return isnum(n);
-	if(!strExists(n,".")||n.indexOf('.')>n.indexOf('('))//Return 0 which indicates as false if the bracket position is invalid
-		return 0;
-	if(!isWhole(n.substring(n.indexOf('(')+1,n.indexOf(')'))))//Return 0 which indicates as false if the recursion is invalid
-		return 0;
-	return isnum(rmstr(rmstr(n,"("),")"));//Check the number string without brackets
-}
-String strcal::fixrnum(String n){//Assign a function same as `fixnum` with recursive number support
-	if(!strExists(n,"("))//Check the number string as a terminating one if it contains no brackets
-		return fixnum(n);
-	char sign=n[0]==0;//Assign the sign indicator
-	String n0=n.substring(n.indexOf('(')+1,n.indexOf(')')),n1=absstr(n.substring(0,n.length()-n0.length()-2));//Divide the number string into two parts by assigning 2 strings
-	while((strExists(n1,".")?n1.indexOf('.')-1:n1.length())>1&&n1[0]=='0')//Remove the '0's from the left in the terminating part
-		n1.remove(0,1);
-	if(fixnum(n0)=="0"){//Return only the terminating part if the recursive part contains only '0's
-		if(n1.endsWith("."))
-			n1.remove(n1.length()-1);
-		return fixnum((sign?"-":"")+n1);
-	}
-	for(char modify=1;modify&&n0.length()>1;)//Shorten the recursive part
-		for(size_t len=n0.length()/2;len;len--){
-			if(n0.length()%len)
-				continue;
-			modify=n0.substring(0,len)==n0.substring(n0.length()-len);
-			for(size_t i=n0.length()/len-1;modify&&--i;modify=n0.substring(0,len)==n0.substring(len*i-1,len*(i+1)-1));
-			if(modify){
-				n0=n0.substring(0,len);
-				break;
-			}
-		}
-	while(n0.endsWith(String(n1[n1.length()-1])))//Shorten the number string as much as possible
-		n0=String(n0[n0.length()-1])+n0.substring(0,n0.length()-1),n1=n1.substring(0,n1.length()-1);
-	if(n0=="9")//Return 1 more of the terminating part only if the recursive part is only "9"
-		return (sign?"-":"")+returnPoint(addWhole(fixnum(rmstr(n,".")),"1"),n.length()-n.indexOf('.')-1);
-	return (sign?"-":"")+n1+"("+n0+")";//Return the result
 }
 void strcal::rnum2frac(String n,String &dividend,String &divisor){//Assign a function which turns number strings into parts of a fraction
 	if(!strExists(n,"("))//(The number string isn't recursive)
