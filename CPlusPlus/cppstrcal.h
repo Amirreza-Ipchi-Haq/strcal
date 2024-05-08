@@ -175,6 +175,49 @@ namespace strcal{
 			tmp=divideWhole(x,y,1),y=divideWhole(y,x,1),x=tmp;
 		return x=="0"?y:x;//Return the non-"0" string
 	}
+	bool isrnum(std::string n){//Assign a function same as `isnum` with recursive number support
+		if(n.size()<2)//Check if the string represents a whole number if it contains less than 2 characters
+			return isWhole(n);
+		if(((!strExists(n,"("))^(n.back()!=')'))||n.find('(')!=n.rfind('(')||n.find(')')!=n.rfind(')'))//Return 0 which indicates as false if the string has a bracket with no matching pair or there are more than 2 brackets
+			return 0;
+		if(!strExists(n,"("))//Check the number string as a terminating one if it has no brackets
+			return isnum(n);
+		if(!strExists(n,".")||n.find('.')>n.find('('))//Return 0 which indicates as false if the bracket position is invalid
+			return 0;
+		if(!isWhole(n.substr(n.find('(')+1,n.size()-n.find('(')-2)))//Return 0 which indicates as false if the recursion is invalid
+			return 0;
+		return isnum(rmstr(rmstr(n,"("),")"));//Check the number string without brackets
+	}
+	std::string fixrnum(std::string n){//Assign a function same as `fixnum` with recursive number support
+		if(!strExists(n,"("))//Check the number string as a terminating one if it contains no brackets
+			return fixnum(n);
+		char sign=n[0]=='-';//Assign the sign indicator
+		std::string n0=n.substr(n.find('(')+1,n.size()-n.find('(')-2);//Assign a string which stores the recursive part
+		n=absstr(n.substr(0,n.size()-n0.size()-2));//Set the number string into two parts by assigning 2 strings
+		while((strExists(n,".")?n.find('.')-1:n.size())>1&&n[0]=='0')//Remove the '0's from the left in the terminating part
+			n.erase(0,1);
+		if(fixnum(n0)=="0"){//Return only the terminating part if the recursive part contains only '0's
+			if(n.back()=='.')
+				n.pop_back();
+			return fixnum((sign?"-":"")+n);
+		}
+		for(char modify=1;modify&&n0.size()>1;)//Shorten the recursive part
+			for(size_t len=n0.size()/2;len;len--){
+				if(n0.size()%len)
+					continue;
+				modify=n0.substr(0,len)==n0.substr(n0.size()-len,len);
+				for(size_t i=n0.size()/len-1;modify&&--i;modify=n0.substr(0,len)==n0.substr(len*i-1,len));
+				if(modify){
+					n0=n0.substr(0,len);
+					break;
+				}
+			}
+		while(n.back()==n0.back())//Shorten the number string as much as possible
+			n0=n0.back()+n0.substr(0,n0.size()-1),n=n.substr(0,n.size()-1);
+		if(n0=="9")//Return 1 more of the terminating part only if the recursive part is only "9"
+			return (sign?"-":"")+returnPoint(addWhole(fixnum(rmstr(n,".")),"1"),n.size()-n.find('.')-1);
+		return (sign?"-":"")+n+"("+n0+")";//Return the result
+	}
 	std::string calculate(std::string x,std::string y,const char operation){//Assign the function which calculates 2 numbers with a given operator
 		std::string answer=operation=='*'?"0":operation=='/'&&((x[0]=='-')^(y[0]=='-'))?"-":"";//Assign the answer string
 		const size_t divide=operation=='+'||operation=='-'||operation=='*'||operation=='%'?!strExists(x,".")&&!strExists(y,".")?0:strExists(x,".")&&!strExists(y,".")?x.size()-x.find('.')-1:!strExists(x,".")&&strExists(y,".")?y.size()-y.find('.')-1:operation=='*'?x.size()+y.size()-x.find('.')-y.find('.')-2:x.size()-x.find('.')>y.size()-y.find('.')?x.size()-x.find('.')-1:y.size()-y.find('.')-1:0;//Assign the division variable for returning the floating point (usless for division)
@@ -250,52 +293,9 @@ namespace strcal{
 					answer=fixnum(answer.substr(answer.find('(')+1,-1))=="0"?fixnum(rmstr(answer,"(")):answer+")";//Finalize the answer string
 				}
 				finish:
-				return fixnum(answer);//Return standard form of the answer
+				return fixrnum(answer);//Return standard form of the answer
 		}
 		return "";//Return an empty string if the operation is invalid
-	}
-	bool isrnum(std::string n){//Assign a function same as `isnum` with recursive number support
-		if(n.size()<2)//Check if the string represents a whole number if it contains less than 2 characters
-			return isWhole(n);
-		if(((!strExists(n,"("))^(n.back()!=')'))||n.find('(')!=n.rfind('(')||n.find(')')!=n.rfind(')'))//Return 0 which indicates as false if the string has a bracket with no matching pair or there are more than 2 brackets
-			return 0;
-		if(!strExists(n,"("))//Check the number string as a terminating one if it has no brackets
-			return isnum(n);
-		if(!strExists(n,".")||n.find('.')>n.find('('))//Return 0 which indicates as false if the bracket position is invalid
-			return 0;
-		if(!isWhole(n.substr(n.find('(')+1,n.size()-n.find('(')-2)))//Return 0 which indicates as false if the recursion is invalid
-			return 0;
-		return isnum(rmstr(rmstr(n,"("),")"));//Check the number string without brackets
-	}
-	std::string fixrnum(std::string n){//Assign a function same as `fixnum` with recursive number support
-		if(!strExists(n,"("))//Check the number string as a terminating one if it contains no brackets
-			return fixnum(n);
-		char sign=n[0]=='-';//Assign the sign indicator
-		std::string n0=n.substr(n.find('(')+1,n.size()-n.find('(')-2);//Assign a string which stores the recursive part
-		n=absstr(n.substr(0,n.size()-n0.size()-2));//Set the number string into two parts by assigning 2 strings
-		while((strExists(n,".")?n.find('.')-1:n.size())>1&&n[0]=='0')//Remove the '0's from the left in the terminating part
-			n.erase(0,1);
-		if(fixnum(n0)=="0"){//Return only the terminating part if the recursive part contains only '0's
-			if(n.back()=='.')
-				n.pop_back();
-			return fixnum((sign?"-":"")+n);
-		}
-		for(char modify=1;modify&&n0.size()>1;)//Shorten the recursive part
-			for(size_t len=n0.size()/2;len;len--){
-				if(n0.size()%len)
-					continue;
-				modify=n0.substr(0,len)==n0.substr(n0.size()-len,len);
-				for(size_t i=n0.size()/len-1;modify&&--i;modify=n0.substr(0,len)==n0.substr(len*i-1,len));
-				if(modify){
-					n0=n0.substr(0,len);
-					break;
-				}
-			}
-		while(n.back()==n0.back())//Shorten the number string as much as possible
-			n0=n0.back()+n0.substr(0,n0.size()-1),n=n.substr(0,n.size()-1);
-		if(n0=="9")//Return 1 more of the terminating part only if the recursive part is only "9"
-			return (sign?"-":"")+returnPoint(addWhole(fixnum(rmstr(n,".")),"1"),n.size()-n.find('.')-1);
-		return (sign?"-":"")+n+"("+n0+")";//Return the result
 	}
 	void rnum2frac(std::string n,std::string &dividend,std::string &divisor){//Assign a function which turns number strings into parts of a fraction
 		if(!strExists(n,"("))//(The number string isn't recursive)
