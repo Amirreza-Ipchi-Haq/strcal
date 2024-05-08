@@ -359,6 +359,94 @@ Examples:
 	while x!='0'and y!='0': #Find remainders of both strings as numbers until one of them is '0'
 		x,y=divideWhole(x,y)[1],divideWhole(y,x)[1]
 	return y if x=='0'else x #Return the string which isn't '0'
+def isrnum(n):
+	"""Does the same as `isnum(n)` with recursive number support
+
+Note: The recursive decimals are seperated with brackets (For example 3.(3)).
+
+Args:
+	n(str): The string to be checked (Can also be other data types, which will return `False` in that case)
+
+Returns:
+	bool: `True` if the string represents a number, `False` if not
+
+Examples:
+	>>> isrnum('123')
+	True
+
+	>>> isrnum('3.(3)')
+	True
+
+	>>> isrnum('ABC')
+	False
+
+	>>> isrnum(123)
+	False"""
+	if type(n)!=str: #Return false if the parameter isn't a string
+		return False
+	if len(n)<2: #Check if the string represents a whole number if it contains less than 2 characters
+		return n.isdigit()
+	if(('('not in n)^(n[-1]!=')'))or n.find('(')!=n.rfind('(')or n.find(')')!=n.rfind(')'): #Return false if the number of brackets are invalid
+		return False
+	if'('not in n: #Check if the string represents a whole number
+		return isnum(n)
+	if'.'not in n or n.find('.')>n.find(')'): #Return false if the recursive decimal number string is invalid
+		return False
+	if not n[n.find('(')+1:n.find(')')].isdigit(): #Return false if the recursive part is invalid
+		return False
+	return isnum(n.replace('(','').replace(')','')) #Check the complete number without the brackets
+def fixrnum(n):
+	"""Does the same as `fixnum(n)` with recursive number support
+
+Note: The recursive decimals are seperated with brackets (For example 3.(3)).
+
+Args:
+	n(str): The string to be standardized
+
+Returns:
+	str: The standardized version of the given number string (or the same thing if it's already standard)
+
+Examples:
+	>>> fixrnum('123')
+	'123'
+
+	>>> fixnum('-000000000000000.000000000000000(00000000000000000)')
+	'0'"""
+	if'('not in n: #Check the number string as a terminating one if there are no brackets
+		return fixnum(n)
+	sign=n[0]=='-' #Assign the sign indicator
+	n0=n[n.find('(')+1:n.find(')')] #Assign a string which stores the recursive part
+	n=absstr(n[:len(n)-len(n0)-2]) #Set the number string to only the terminating part
+	while(n.find('.')if'.'in n else len(n))>1 and n[0]=='0': #Remove the '0's at the left of the terminating part
+		n=n[1:]
+	if fixnum(n0)=='0': #(The recursive part only contains '0's)
+		if n[-1]=='.': #Remove the point if it's at the right
+			n=n[:len(n)-1]
+		return fixnum('-'*sign+n) #Return only the terminating part
+	if len(n0)>1: #(The recursive part might be able to be shortend)
+		modify=True #Assign a break condition
+		while modify and len(n0)>1: #Shorten the recursive part
+			length=len(n0)//2
+			while length:
+				if len(n0)%length:
+					length-=1
+					continue
+				modify=n0[:length]==n0[len(n0)-length:]
+				i=len(n0)//length-1
+				while modify and i:
+					modify=n0[:length]==n0[length*i-1:length*(i+1)-1]
+					i-=1
+				if modify:
+					n0=n0[:length]
+					break
+				length-=1
+		del modify,length,i #Delete extra objects from this scope
+	while n[-1]==n0[-1]: #Shorten the number string
+		n0=n0[-1]+n0[:len(n0)-1]
+		n=n[:len(n)-1]
+	if n0=='9': #Return 1 more of the terminating part only if the recursive part is only '9'
+		return '-'*sign+returnPoint(addWhole(fixnum(n.replace('.','')),'1'),len(n)-n.find('.')-1)
+	return '-'*sign+n+'('+n0+')' #Return the result
 def calculate(x,y,operation):
 	"""Does operation on number strings with the given operator (which is limited
 to the same operators as `+`, `-`, `*`, `/`, `%`)
@@ -495,98 +583,9 @@ Examples:
 				answer+=simpleWholeDivide(x,y)[0] #Find the whole answer of the new division as a string and append it to the answer string
 				x=simpleWholeDivide(x,y)[1] #Store the new remainder
 				if x=='0': #Return the current answer string without '(' in case that the remainder is '0'
-					return fixnum(answer.replace('(',''))
-			return fixnum(answer.replace('(',''))if fixnum(answer[answer.find('('):])=='0'else fixnum(answer+')') #Finalize the answer and return it
+					return fixrnum(answer.replace('(',''))
+			return fixrnum(answer.replace('(',''))if fixnum(answer[answer.find('('):])=='0'else fixrnum(answer+')') #Finalize the answer and return it
 		return answer #Return the answer if there's no decimal in it
-	return #Return `None` if the operator is invalid
-def isrnum(n):
-	"""Does the same as `isnum(n)` with recursive number support
-
-Note: The recursive decimals are seperated with brackets (For example 3.(3)).
-
-Args:
-	n(str): The string to be checked (Can also be other data types, which will return `False` in that case)
-
-Returns:
-	bool: `True` if the string represents a number, `False` if not
-
-Examples:
-	>>> isrnum('123')
-	True
-
-	>>> isrnum('3.(3)')
-	True
-
-	>>> isrnum('ABC')
-	False
-
-	>>> isrnum(123)
-	False"""
-	if type(n)!=str: #Return false if the parameter isn't a string
-		return False
-	if len(n)<2: #Check if the string represents a whole number if it contains less than 2 characters
-		return n.isdigit()
-	if(('('not in n)^(n[-1]!=')'))or n.find('(')!=n.rfind('(')or n.find(')')!=n.rfind(')'): #Return false if the number of brackets are invalid
-		return False
-	if'('not in n: #Check if the string represents a whole number
-		return isnum(n)
-	if'.'not in n or n.find('.')>n.find(')'): #Return false if the recursive decimal number string is invalid
-		return False
-	if not n[n.find('(')+1:n.find(')')].isdigit(): #Return false if the recursive part is invalid
-		return False
-	return isnum(n.replace('(','').replace(')','')) #Check the complete number without the brackets
-def fixrnum(n):
-	"""Does the same as `fixnum(n)` with recursive number support
-
-Note: The recursive decimals are seperated with brackets (For example 3.(3)).
-
-Args:
-	n(str): The string to be standardized
-
-Returns:
-	str: The standardized version of the given number string (or the same thing if it's already standard)
-
-Examples:
-	>>> fixrnum('123')
-	'123'
-
-	>>> fixnum('-000000000000000.000000000000000(00000000000000000)')
-	'0'"""
-	if'('not in n: #Check the number string as a terminating one if there are no brackets
-		return fixnum(n)
-	sign=n[0]=='-' #Assign the sign indicator
-	n0=n[n.find('(')+1:n.find(')')] #Assign a string which stores the recursive part
-	n=absstr(n[:len(n)-len(n0)-2]) #Set the number string to only the terminating part
-	while(n.find('.')if'.'in n else len(n))>1 and n[0]=='0': #Remove the '0's at the left of the terminating part
-		n=n[1:]
-	if fixnum(n0)=='0': #(The recursive part only contains '0's)
-		if n[-1]=='.': #Remove the point if it's at the right
-			n=n[:len(n)-1]
-		return fixnum('-'*sign+n) #Return only the terminating part
-	if len(n0)>1: #(The recursive part might be able to be shortend)
-		modify=True #Assign a break condition
-		while modify and len(n0)>1: #Shorten the recursive part
-			length=len(n0)//2
-			while length:
-				if len(n0)%length:
-					length-=1
-					continue
-				modify=n0[:length]==n0[len(n0)-length:]
-				i=len(n0)//length-1
-				while modify and i:
-					modify=n0[:length]==n0[length*i-1:length*(i+1)-1]
-					i-=1
-				if modify:
-					n0=n0[:length]
-					break
-				length-=1
-		del modify,length,i #Delete extra objects from this scope
-	while n[-1]==n0[-1]: #Shorten the number string
-		n0=n0[-1]+n0[:len(n0)-1]
-		n=n[:len(n)-1]
-	if n0=='9': #Return 1 more of the terminating part only if the recursive part is only '9'
-		return '-'*sign+returnPoint(addWhole(fixnum(n.replace('.','')),'1'),len(n)-n.find('.')-1)
-	return '-'*sign+n+'('+n0+')' #Return the result
 def rnum2frac(n):
 	"""Turns any rational number string into parts of a fraction stored as strings
 
