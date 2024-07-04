@@ -1,10 +1,10 @@
 # strcal
 This module/library which is written in different languages (C, C++ (both standard and for Arduino) & Python3), calculates operations on numbers stored as strings as if they were numbers and usually returns a string which is the answer. It's useful for calculating numbers out of range for default variable types (for example, adding two numbers with 1000 digits). This module/library supports any rational number as inputs and outputs. The only limit is the maximum number of indexes that a character array can have. Also, since it works with numbers stored as strings, it doesn't have [Floating-Point Arthimetic](https://en.wikipedia.org/wiki/Floating-point_arithmetic) problems, such as `0.1+0.2` resulting `0.30000000000000004`.
 
-Besides all, not just it has some number string arthimetic functions, but also some other functions to do operations on strings (such as `strtmp` which returns a copy of a string and makes you able to free the original one afterwards).
+Besides all, not just it has some number string arthimetic functions, but also some other functions to do operations on strings (such as `strtmp` in the C version which returns a copy of a string and makes you able to free the original one afterwards).
 ## Installation
 ### For non-Arduino-C++ users
-This module/library is portable. It doesn't require installing and is independent from any operating system. For C/C++, you can simply include it by using `#include "strcal.h"`, and for Python3, it can be imported by using `import strcal` (It must be in the same directory as the code you want to use this library in).
+This module/library is portable. It doesn't require installing and is independent from any operating system. For C, you can simply include it by using `#include "cstrcal.h"`, for C++ you can include it using `#include "cppstrcal.h"` and for Python3, it can be imported by using `import strcal` (It must be in the same directory as the code you want to use this library in).
 ### For Arduino C++ users
 To install this library for Arduino IDE, you can do the following steps:
 * Download the repository (either from the code section as a `.zip` file, or using a Git software such as Git or Github CLI)
