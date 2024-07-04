@@ -76,7 +76,7 @@ char* mltstr(char* s0,char* s1,size_t n,const char release){//Assign a function 
 char* rmchr(char* n,char c,const char release){//Assign a function which removes a character completely from a string
 	char *n0=strtmp(n,release);//Create a copy of the string and free the original one if told to
 	while(strchr(n0,c))//Remove the assigned character from the string until it doesn't exist in it
-		n0=mltstr(strappend(strntmp(n0,strlen(n0)-strlen(strchr(n0,c)),0),strchr(strchr(n0,c),strchr(n0,c)[1]),2),n0,0,3);
+		n0=mltstr(strappend(strntmp(n0,strlen(n0)-strlen(strchr(n0,c)),0),strchr(n0,c)+1,2),n0,0,3);
 	return n0;//Return the result
 }
 char* absstr(char* n,const char release){//Assign a function which removes the first '-' if it exists from a string
