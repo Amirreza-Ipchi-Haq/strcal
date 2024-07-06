@@ -103,7 +103,7 @@ namespace strcal{
 				return 1+(a[i]<b[i]);//Return 1 if the current index character of the first string is bigger than the one in the second string, unless, return 2
 		return 0;//Return 0 indicating that both strings are exactly the same
 	}
-	uint8_t mod10(const int8_t n){//Assign a function which finds mod10
+	static unsigned char mod10(char n){//Assign a function which finds mod10
 		return n%10<0?10+n%10:n%10;//Return the answer
 	}
 	std::string subtractWhole(std::string x,std::string y){//Assign a function which subtracts a whole number from another as strings
