@@ -1,7 +1,7 @@
 # The `char isWhole(const char* n)` Function
 This function checks if the current string represents a whole number (which means it only contains digits).
 ## Arguments
-* `char* s`: The string to be checked.
+* `char* n`: The string to be checked.
 ## Return value
 `0` if false, `1` if true
 ## Example
