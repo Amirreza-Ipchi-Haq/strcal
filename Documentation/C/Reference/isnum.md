@@ -8,7 +8,7 @@ This fuction checks if a string represents a number with terminiatng decimals or
 ```c
 #include<stdio.h>
 #include"cstrcal.h"
-#define TO_BOOL(s) (isNum(s)?"true":"false")
+#define TO_BOOL(s) (isnum(s)?"true":"false")
 int main(){
 	printf("%s\n%s\n",TO_BOOL("-00.123450"),TO_BOOL("-.12"));
 	return 0;
