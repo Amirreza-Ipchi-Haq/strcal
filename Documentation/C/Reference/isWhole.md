@@ -14,7 +14,7 @@ int main(){
 	return 0;
 }
 ```
-In this example, we check an array of strings containing 2 indexes. Then, we print the result which would be like this:
+In this example, we check 2 strings. Then, we print the result which would be like this:
 ```
 true
 false
