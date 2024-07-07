@@ -8,7 +8,7 @@ This function checks if the current string represents a whole number (which mean
 ```c
 #include<stdio.h>
 #include"cstrcal.h"
-#define TO_BOOL(s) isWhole(s)?"true":"false"
+#define TO_BOOL(s) (isWhole(s)?"true":"false")
 int main(){
 	char *(s[2])={"12345","-12"};
 	printf("%s\n%s\n",TO_BOOL(s[0]),TO_BOOL(s[1]));
