@@ -33,7 +33,7 @@ bool strcal::isnum(String n){//Assign a function which checks if a string repres
 	if(strExists(n,"-"))//Return false if there are more '-'s
 		return 0;
 	if(strExists(n,".")){//(A '.' exists)
-		if(n[0]=='.'||n.endsWith(".")||n.indexOf('.')!=n.lastIndexOf('.'))//Return false if the first/last index of the string is '.', or there are more than one '.'
+		if(n.endsWith(".")||n.indexOf('.')!=n.lastIndexOf('.'))//Return false if the first/last index of the string is '.', or there are more than one '.'
 			return 0;
 		n=rmstr(n,".");//Remove the '.' from a string
 	}
@@ -44,6 +44,8 @@ String strcal::fixnum(String n){//Assign a function which turns a number string 
 		return n;
 	const char sign=n[0]=='-';//Assign the sign variable
 	n=absstr(n);//Turn the number into it's absolute form
+	if(n[0]=='.')
+		n="0"+n;
 	while(strExists(n,".")?n.indexOf('.')-1:n.length()>1&&n[0]=='0')//Remove the '0's at the left
 		n.remove(0,1);
 	if(strExists(n,".")){//(The string contains '.')
@@ -59,7 +61,7 @@ String strcal::fixnum(String n){//Assign a function which turns a number string 
 String strcal::returnPoint(String n,const size_t posFromRight){//Assign a function which returns '.' back to a string
 	if(!posFromRight)//Return the original string if the position of '.' to be put from the right is 0
 		return n;
-	return fixnum(mltstr((n.length()>posFromRight?n.substring(0,n.length()-posFromRight):"0")+".","0",n.length()<posFromRight?posFromRight-n.length():0)+n.substring(n.length()-posFromRight));//Return the string with the '.' back
+	return fixnum(mltstr((n.length()>posFromRight&&n[0]!='.'?n.substring(0,n.length()-posFromRight):"0")+".","0",n.length()<posFromRight?posFromRight-n.length():0)+n.substring(n.length()-posFromRight));//Return the string with the '.' back
 }
 void strcal::swapstr(String &a,String &b){//Assign a function which swaps 2 strings
 	String tmp=a;//Assign a temporary string with the value of the first string
