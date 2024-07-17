@@ -35,7 +35,7 @@ namespace strcal{
 		if(strExists(n,"-"))//Return false if there are more '-'s
 			return 0;
 		if(strExists(n,".")){//(A '.' exists)
-			if(n[0]=='.'||n.back()=='.'||n.find('.')!=n.rfind('.'))//Return false if the first/last index of the string is '.', or there are more than one '.'
+			if(n.back()=='.'||n.find('.')!=n.rfind('.'))//Return false if the first/last index of the string is '.', or there are more than one '.'
 				return 0;
 			n=rmstr(n,".");//Remove the '.' from a string
 		}
@@ -46,6 +46,8 @@ namespace strcal{
 			return n;
 		const char sign=n[0]=='-';//Assign the sign variable
 		n=absstr(n);//Turn the number into it's absolute form
+		if(n[0]=='.')
+			n="0"+n;
 		while((strExists(n,".")?n.find('.')-1:n.size())>1&&n[0]=='0')//Remove the '0's from the left
 			n.erase(0,1);
 		if(strExists(n,".")){//(The string contains '.')
@@ -62,7 +64,7 @@ namespace strcal{
 		if(!posFromRight)//Return the original string if the position of '.' to be put from the right is 0
 			return n;
 		n.insert(n[0]=='-',mltstr("","0",posFromRight>=n.size()?posFromRight-n.size()+(n[0]=='-')+1:0));//Put extra '0's at the back
-		return fixnum(n.insert(n.size()-posFromRight,"."));//Return the string with the '.' back
+		return fixnum(n.insert(n.size()-posFromRight,n[0]=='-'?"0.":"."));//Return the string with the '.' back
 	}
 	void removeDecimals(std::string &x,std::string &y){//Assign a function which removes the floating point by multiplying both numbers by 10
 		if(strExists(x,".")&&!strExists(y,"."))//Add '0's with the number of decimals in the first string to the second string and remove the '.' from the first one if the first string contains '.' and the second string doesn't
