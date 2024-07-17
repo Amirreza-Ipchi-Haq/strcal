@@ -54,7 +54,7 @@ Examples:
 	if'-'in n:#Return false if there are more '-'s
 		return False
 	if'.'in n:#(There's at least one '.' in the string)
-		if n[0]=='.'or n.endswith('.')or n.find('.')!=n.rfind('.'):#Return false if the '.' is at the beginning/ending, or there are more than one
+		if n.endswith('.')or n.find('.')!=n.rfind('.'):#Return false if the '.' is at the beginning/ending, or there are more than one
 			return False
 		n=n.replace('.','')#Remove the '.' from the string
 	return n.isdigit()#Check if the modified string only contains digits
@@ -79,6 +79,8 @@ Examples:
 		return n
 	sign='-'if n[0]=='-'else''#Store the sign
 	n=absstr(n)#Turn the number string into its absolute form
+	if n[0]=='.':
+		n='0'+n
 	while(n.find('.')if'.'in n else len(n))>1 and n[0]=='0':#Remove the zeros at the left
 		n=n[1:]
 	if'.'in n:#(There's a floating point in the number string)
@@ -114,7 +116,7 @@ Examples:
 	'64'"""
 	if not posFromRight:#Return the same string if the given position from right was 0
 		return n
-	return fixnum((n[:len(n)-posFromRight]if len(n)>posFromRight else'0')+'.'+('0'*(len(n)-posFromRight)if len(n)<posFromRight else '')+n[len(n)-posFromRight:])#Return the number string with the floating point added
+	return fixnum((n[:len(n)-posFromRight]if len(n)>posFromRight or n[0]=='-'else'0')+'.'+('0'*(len(n)-posFromRight)if len(n)<posFromRight else '')+n[len(n)-posFromRight:])#Return the number string with the floating point added
 def removeDecimals(x,y):
 	"""Removes the floating point from 2 number strings by multiplying them in 10 together
 (Useful if you want to turn floating point numbers into integers to do operations on them)
