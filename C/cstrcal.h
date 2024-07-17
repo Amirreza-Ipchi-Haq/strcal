@@ -91,7 +91,7 @@ char isnum(char* n){//Assign a function which checks if a string represents a nu
 	if(strlen(n)<2)//Check the number string if it only contains 1 character
 		return isWhole(n);//Return the result
 	char isNegative=n[0]=='-';//Assign the negativity indicator
-	if(n[(size_t)isNegative]<'0'||n[(size_t)isNegative]>'9'||n[strlen(n)-1]<'0'||n[strlen(n)-1]>'9')//Return 0 which indicates as false if the string doesn't represent a number (Check the beginning & the end)
+	if(((n[(size_t)isNegative]<'0'||n[(size_t)isNegative]>'9')&&n[(size_t)isNegative]!='.')||n[strlen(n)-1]<'0'||n[strlen(n)-1]>'9')//Return 0 which indicates as false if the string doesn't represent a number (Check the beginning & the end)
 		return 0;
 	char reachedPoint=0;//Assign the point indicator
 	for(size_t i=strlen(n)-1;--i>(unsigned short)isNegative;)//Check every digit
@@ -107,6 +107,8 @@ char* fixnum(char* n,const char release){//Assign a function which turns the num
 	if(strlen(n)<2)//(The string only contains 1 character, so it's definitely in the standard form)
 		return strtmp(n,release);//Return a copy of the string and free the original one if told to
 	char sign=(n[0]=='-'?'-':0),*n0=absstr(n,release);//Save the sign of the number and turn the number into its absolute form
+	if(n0[0]=='.')
+		n0=strappend("0",n0,1);
 	while(strlen(n0)-(strchr(n0,'.')?strlen(strchr(n0,'.')):0)>1&&n0[0]=='0')//Remove the zeros from the left
 		n0=strnrtmp(n0,strlen(n0)-1,1);
 	if(strchr(n0,'.')){//(The number has a floating point)
@@ -127,7 +129,7 @@ void swapstr(char** a,char** b){//Assign a function which swaps 2 strings alloca
 char* returnPoint(char* n,const size_t posFromRight,const char release){//Assign a function which returns the '.' to an integer string
 	if(!posFromRight)//Cancel the purpose of the function if `posFromRight` is zero
 		return strtmp(n,release);//Return a copy of the string and free the original one if told to
-	char *tmp=absstr(n,0),*result=posFromRight<strlen(tmp)?strtmp("",0):mltstr("0.","0",posFromRight-strlen(tmp),0),sign=n[0]=='-'?'-':0;//Assign variables
+	char sign=n[0]=='-'?'-':0,*tmp=absstr(n,0),*result=posFromRight<strlen(tmp)?strtmp("",0):mltstr(sign=='-'?"0":"0.","0",posFromRight-strlen(tmp),0);//Assign variables
 	free(tmp);//Free the temporary string
 	for(size_t i=sign=='-';i<strlen(n);result=strappend(result,strlen(n)>posFromRight&&i==strlen(n)-posFromRight?strappend(".",CHR2STR(n[i]),0):CHR2STR(n[i]),2),i++);//Return the '.' to the whole number
 	if(release)//Free the string if told to
@@ -390,6 +392,8 @@ char* fixrnum(char* n,const char release){//Assign a function same as `fixnum` w
 		return fixnum(n,release);
 	char sign=n[0]=='-'?'-':0,*n0=strnrtmp(n,strlen(strchr(n,'('))-1,0),*n1=strntmp(n,strlen(n)-strlen(n0)-1,release);//Assign the sign indicator, the recursive part & the terminating part
 	n0=strntmp(n0,strlen(n0)-1,1),n1=absstr(n1,1);//Remove the extra ')' from the recursive part and remove the sign from the terminating part if it exists
+	if(n1[0]=='.')
+		n1=strappend("0",n1,1);
 	while(strlen(n1)-(strchr(n1,'.')?strlen(strchr(n1,'.')):0)>1&&n1[0]=='0')//Remove the zeros from the left of the terminating part
 		n1=strnrtmp(n1,strlen(n1)-1,1);
 	{//Check if the recursive part only contains '0' or '9' or none in a temporary scope
