@@ -257,7 +257,7 @@ namespace strcal{
 				if(y=="0")//Break out of the switch-case statement if the second string is "0" (which is invalid)
 					break;
 				removeDecimals(x,y);//Turn both strings into integers
-				return returnPoint((x[0]=='-'?"-":"")+divideWhole(absstr(x),absstr(y),1),divide);//Return the remainder with the floating point back
+				return returnPoint((y[0]=='-'?"-":"")+((x[0]=='-')^(y[0]=='-')?subtractWhole(absstr(y),divideWhole(absstr(x),absstr(y),1)):divideWhole(absstr(x),absstr(y),1)),divide);//Return the remainder with the floating point back
 			case '/':
 				if(y=="0")//Break out of the switch-case statement if the second string is "0" (which is invalid)
 					break;
