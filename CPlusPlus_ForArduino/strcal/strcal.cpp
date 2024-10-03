@@ -121,11 +121,13 @@ String strcal::subtractWhole(String x,String y){//Assign a function which subtra
 	char sign=cmpstr(x,y)>1,subtract=0;//Assign the sign indicator (which is 1 (true) if the second string is bigger)
 	if(sign)//Swap both strings if the sign indicator represents true
 		swapstr(x,y);
+#define MOD10(n) (char)(n%10<0?10+n%10:n%10)
 	for(size_t i=x.length();i--;)//Do the subtraction digit by digit
 		if(i<x.length()-y.length())
-			answer=char(mod10(x[i]-'0'-subtract)+'0')+answer,subtract=x[i]-'0'-subtract<0;
+			answer=char(MOD10(x[i]-'0'-subtract)+'0')+answer,subtract=x[i]-'0'-subtract<0;
 		else
-			answer=char(mod10(x[i]-y[i-(x.length()-y.length())]-subtract)+'0')+answer,subtract=x[i]-y[i-(x.length()-y.length())]-subtract<0;
+			answer=char(MOD10(x[i]-y[i-(x.length()-y.length())]-subtract)+'0')+answer,subtract=x[i]-y[i-(x.length()-y.length())]-subtract<0;
+#undef MOD10
 	return fixnum(sign?"-"+answer:answer);//Return the answer in its standard form with the sign back
 }
 String strcal::simpleWholeDivide(String x,String y,const bool option){//Assign a function which does division between 2 numbers as strings in a simple way (useful if x/y<10)
@@ -173,8 +175,6 @@ String strcal::gcd(String x,String y){//Assign a function which finds the greate
 	if(x==y)//Return the first string if both strings are equal
 		return x;
 	String tmp;//Assign a temporary string
-	while(x.endsWith("0")&&y.endsWith("0"))//Remove the common factor 10 from both strings
-		x.remove(x.length()-1),y.remove(y.length()-1);
 	while(x!="0"&&y!="0")//Find the remainder of both strings until one of them is "0"
 		tmp=divideWhole(x,y,1),y=divideWhole(y,x,1),x=tmp;
 	return x=="0"?y:x;//Return the non-"0" string
