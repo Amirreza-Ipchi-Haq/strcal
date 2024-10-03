@@ -3,7 +3,6 @@
 #include<stdlib.h>
 #include<string.h>
 #define CHR2STR(c) (char[2]){c,0}//Assign a character-to-string function
-#define MOD10(n) (char)(n%10<0?10+n%10:n%10)//Assign a function which finds `n mod 10`
 char* strtmp(char* s,const char release){//Assign a function which creates a temporary string (Same as `strdup` with memory management included)
 	if(!s)//(The string is NULL)
 		return s;//Return NULL
@@ -121,8 +120,8 @@ char* fixnum(char* n,const char release){//Assign a function which turns the num
 	return n[0]<'1'&&strlen(n)<2?strtmp("0",0):strappend(CHR2STR(sign),n,1);//Return the result, or if the result is "0", return a copy of "0" (so it wouldn't return "-0")
 }
 void swapstr(char** a,char** b){//Assign a function which swaps 2 strings allocated in the heap
-	char *tmp=strtmp(*a,1);//Create a copy of the first string
-	*a=strtmp(*b,1),*b=strtmp(tmp,1);//Swap values and free the copy after it
+	char *tmp=*a;//Create a copy of the first string
+	*a=*b,*b=tmp;//Swap values and free the copy after it
 	return;
 }
 char* returnPoint(char* n,const size_t posFromRight,const char release){//Assign a function which returns the '.' to an integer string
@@ -203,11 +202,13 @@ char* subtractWhole(char* x,char* y,const char release){//Assign a function whic
 	char *answer=strtmp("",0),sign=cmpstr(x,y)>1?'-':0,subtract=0;//Assign copies of both strings, answer & sign character
 	if(sign)//Swap if the second string is bigger than the first one
 		swapstr(&x,&y);
+#define MOD10(n) (char)(n%10<0?10+n%10:n%10)//Assign a function which finds `n mod 10`
 	for(size_t i=strlen(x);i--;)//Do the subtraction digit by digit
 		if(i<strlen(x)-strlen(y))
 			answer=strappend(CHR2STR(MOD10(x[i]-'0'-subtract)+'0'),answer,1),subtract=x[i]-'0'-subtract<0;
 		else
 			answer=strappend(CHR2STR(MOD10(x[i]-y[i-(strlen(x)-strlen(y))]-subtract)+'0'),answer,1),subtract=x[i]-y[i-(strlen(x)-strlen(y))]-subtract<0;
+#undef MOD10
 	free(x),free(y);//Free the copies
 	return strappend(CHR2STR(sign),fixnum(answer,1),1);//Return the result with the sign back
 }
@@ -354,10 +355,8 @@ char* gcd(char* x,char* y,const char release){//Assign a function which returns 
 	}
 	x=strtmp(x,release&2),y=strtmp(y,release&1);
 	char *tmp;//Assign a copy of both strings and free the original ones if told to, and assign a temporary string
-	while(x[strlen(x)-1]<'1'&&y[strlen(y)-1]<'1')//Divide both copies by 10 until one of them is not divisable by 10
-		x=strntmp(x,strlen(x)-1,1),y=strntmp(y,strlen(y)-1,1);
 	while(x[0]>'0'&&y[0]>'0')//Continue finding remainders of both copies until one of them becomes "0"
-		tmp=divideWhole(x,y,1,0),y=divideWhole(y,x,1,3),x=strtmp(tmp,1);
+		tmp=divideWhole(x,y,1,0),y=divideWhole(y,x,1,3),x=tmp;
 	if(cmpstr(x,y)>1){//(The second copy is not 0)
 		free(x);//Free the first copy
 		return y;//Return the second copy
