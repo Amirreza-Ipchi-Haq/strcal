@@ -263,23 +263,22 @@ Note1: This function divides numbers in a simple but slow way, so it's useful fo
 dividing numbers which the answer is always below 10. (Don't use this if the answer
 can be more. If so, you can use `divideWhole` instead.)
 
+Note2: This function will throw an exception if the second argument is `"0"`.
+
 Args:
 	x(str): The first whole number string to do the division on
 
 	y(str): The first whole number string to do the division by
 
 Returns:
-	(str|None,str|None): A tuple containing 2 numbers which represent the whole answer &
-	the remainder in order from left to right as strings (Both would be `None` if `y` is '0')
+	(str,str): A tuple containing 2 numbers which represent the whole answer &
+	the remainder in order from left to right as strings
 
 Examples:
 	>>> simpleWholeDivide('3','2')
-	('1','1')
-
-	>>> simpleWholeDivide('5','0')
-	(None,None)"""
+	('1','1')"""
 	if y=='0':#Return both values as None if the second string is '0'
-		return None,None
+		raise ZeroDivisionError("Cannot divide by 0.")
 	if y=='1':#Return the first string as the answer & '0' as the remainder if the second string is '1'
 		return x,'0'
 	if x=='0':#Return both answer & remainder '0' if the first string is '0'
@@ -297,7 +296,9 @@ def divideWhole(x,y):
 	"""Divides 2 whole number strings by each other in a faster way (compared to
 `simpleWholeDivide`) and returns the whole answer & the remainder
 
-Note: The given strings must represent whole numbers in their standard form.
+Note0: The given strings must represent whole numbers in their standard form.
+
+Note1: This function will throw an exception if the second argument is `"0"`.
 
 Args:
 	x(str): The first whole number string to do the division on
@@ -305,17 +306,14 @@ Args:
 	y(str): The first whole number string to do the division by
 
 Returns:
-	(str|None,str|None): A tuple containing 2 numbers which represent the whole answer &
-	the remainder in order from left to right as strings (Both would be `None` if `y` is '0')
+	(str,str): A tuple containing 2 numbers which represent the whole answer &
+	the remainder in order from left to right as strings
 
 Examples:
 	>>> divideWhole('3','2')
-	('1','1')
-
-	>>> divideWhole('5','0')
-	(None,None)"""
+	('1','1')"""
 	if y=='0':#Return both values as None if the second string is '0'
-		return None,None
+		raise ZeroDivisionError("Cannot divide by 0.")
 	if y=='1':#Return the first string as the answer & '0' as the remainder if the second string is '1'
 		return x,'0'
 	if x=='0':#Return both answer & remainder '0' if the first string is '0'
@@ -334,7 +332,9 @@ def gcd(x,y):
 	"""Finds the greatest common divisor (GCD) between 2 whole number strings
 using the Euclidean algorithm
 
-Note: The given strings must represent whole numbers in their standard form.
+Note0: The given strings must represent whole numbers in their standard form.
+
+Note1: This function will throw an exception if the at least one of the arguments is `"0"`.
 
 Args:
 	x(str): The first whole number string to find the GCD from
@@ -342,8 +342,8 @@ Args:
 	y(str): The first whole number string to find the GCD from
 
 Returns:
-	str|None: The greatest common divisor of both whole number strings in form
-	of a string, or `None` if at least one of the given strings is '0'
+	str: The greatest common divisor of both whole number strings in form
+	of a string
 
 Examples:
 	>>> gcd('6','9')
@@ -352,12 +352,9 @@ Examples:
 	>>> gcd('0','4')
 	None"""
 	if x=='0'or y=='0':#Return `None` if at least on of the strings is '0'
-		return
+		raise ValueError("Both numbers to calculate the greatest common divisor from must be natural numbers.")
 	if x==y:#Return the first string if both strings are equal
 		return x
-	while x[-1]<'1'and y[-1]<'1':#Remove the common factor 10 from both numbers as strings
-		x=x[:len(x)-1]
-		y=y[:len(y)-1]
 	while x!='0'and y!='0':#Find remainders of both strings as numbers until one of them is '0'
 		x,y=divideWhole(x,y)[1],divideWhole(y,x)[1]
 	return y if x=='0'else x#Return the string which isn't '0'
@@ -464,6 +461,8 @@ take more time than the other operations. Also, if the answer from a division is
 as an argument in `isnum`, it might return `False` (Depends on if the answer has repeating
 decimals or not).
 
+Note3: This function will throw an exception if either it's dividing by 0, or the operator is invalid.
+
 Args:
 	x(str): The first number string in the operation
 
@@ -472,8 +471,7 @@ Args:
 	operation(str): The operator character
 
 Returns:
-	str|None: The answer in form of a string, or `None` if either the operator isn't
-	valid, or it's dividing by 0
+	str: The answer in form of a string
 
 Examples:
 	>>> calculate('2','2','+')
@@ -483,16 +481,7 @@ Examples:
 	'3.(3)'
 
 	>>> calculate('5','1.2','%')
-	'0.2'
-
-	>>> calculate('4','5','A')
-	None
-
-	>>> calculate('8','0','/')
-	None
-
-	>>> claculate('53','0','%')
-	None"""
+	'0.2'"""
 	if operation=='*'or operation=='/':#Pre-assign the answer string if the operator is either '*' or '%'
 		answer='0'if operation=='*'else'-'if operation=='/'and(x[0]=='-')^(y[0]=='-')else''
 	divide=(0 if not'.'in x and not'.'in y else len(x)-x.find('.')-1 if'.'in x and not'.'in y else len(y)-y.find('.')-1 if not'.'in x and'.'in y else len(x)+len(y)-x.find('.')-y.find('.')-2 if operation=='*'else len(x)-x.find('.')-1 if len(x)-x.find('.')>len(y)-y.find('.')else len(y)-y.find('.')-1)if operation=='+'or operation=='-'or operation=='*'or operation=='%'else None#Assign the division value
@@ -534,12 +523,12 @@ Examples:
 		return returnPoint(sign+'0'*divide+answer,divide)#Return the result with the sign & the point back
 	if operation=='%':#Find the modulo if the operator is '%'
 		if y=='0':#Return `None` if the second string is '0'
-			return
+			raise ZeroDivisionError("Cannot divide by 0.")
 		x,y=removeDecimals(x,y)#Remove the point from both strings by multiplying them in 10
 		return returnPoint(('-'if y[0]=='-'else'')+(subtractWhole(absstr(y),divideWhole(absstr(x),absstr(y))[1])if(x[0]=='-')^(y[0]=='-')else divideWhole(absstr(x),absstr(y))[1]),divide)#Return the remainder
 	if operation=='/':#Do division if the operator is '/'
 		if y=='0':#Return `None` if the second string is '0'
-			return
+			raise ZeroDivisionError("Cannot divide by 0.")
 		if x=='0':#Return '0' if the first string is '0'
 			return'0'
 		if x==y:#Return '1' if both strings are equal
@@ -588,6 +577,7 @@ Examples:
 					return fixrnum(answer.replace('(',''))
 			return fixrnum(answer.replace('(',''))if fixnum(answer[answer.find('('):])=='0'else fixrnum(answer+')')#Finalize the answer and return it
 		return answer#Return the answer if there's no decimal in it
+	raise ValueError("Invalid operator found.")
 def rnum2frac(n):
 	"""Turns any rational number string into parts of a fraction stored as strings
 
@@ -621,7 +611,9 @@ Examples:
 def rcalculate(x,y,operation):
 	"""Does the same as `calculate(x,y,operation)` with recursive number support
 
-Note: The recursive decimals are seperated with brackets (For example 3.(3)).
+Note0: The recursive decimals are seperated with brackets (For example 3.(3)).
+
+Note1: This function will throw an exception if either it's dividing by 0, or the operator is invalid.
 
 Args:
 	x(str): The first number string in the operation
@@ -631,8 +623,7 @@ Args:
 	operation(str): The operator character
 
 Returns:
-	str|None: The answer in form of a string, or `None` if either the operator isn't
-	valid, or it's dividing by 0
+	str: The answer in form of a string
 
 Examples:
 	>>> calculate('2','2','+')
@@ -645,24 +636,15 @@ Examples:
 	'0.2'
 
 	>>> calculate('0.(3)','2','*')
-	'0.(6)'
-
-	>>> calculate('4','5','A')
-	None
-
-	>>> calculate('8','0','/')
-	None
-
-	>>> claculate('53','0','%')
-	None"""
+	'0.(6)'"""
 	if operation!='+'and operation!='-'and operation!='*'and operation!='/'and operation!='%':#Return `None` if the operator is invalid
-		return
+		raise ValueError("Invalid operator found.")
 	if(x=='0'or y=='0')and(operation=='+'or operation=='-'):#(At least one of the strings is "0" and the operator is either '+' or '-')
 		if y=='0':#Return the first string if the second string is '0'
 			return x
 		return'-'*(operation=='-'and y!='-')+absstr(y)#Modify the second string and return it if the first string is '0'
 	if y=='0'and(operation=='/'or operation=='%'):#Return `None` if the second number string is '0' and the operator is either '/' or '%'
-		return
+		raise ZeroDivisionError("Cannot divide by 0.")
 	if y=='1'and(operation=='*'or operation=='/'):#Return the first number string if the second number string is '1' and the operator is either '*' or '/'
 		return x
 	if x=='1'and operation=='*':#Return the second number string if the first number string is '1' and the operator is '*'
@@ -698,10 +680,9 @@ if __name__=="__main__":#Run an example if this module is running as a standalon
 		while not y:#Keep writing until a valid string is found
 			y=input().strip()
 		if isrnum(x)and isrnum(y):#(Both strings represent numbers)
-			operation=rcalculate(fixrnum(x),fixrnum(y),operator)#Do the operation
-			if operation:#Print the answer
-				print(operation)
-			else:#Alert if the operation divides a number by 0
+			try:#Print the answer
+				print(rcalculate(fixrnum(x),fixrnum(y),operator))
+			except:
 				print("Cannot divide by 0!")
 		else:#Alert which string doesn't represent a number
 			print("The",("first & the third input aren't numbers"if not isrnum(x)and not isrnum(y)else("first"if isrnum(y)else"third")+" input isn't a number")+'!')
