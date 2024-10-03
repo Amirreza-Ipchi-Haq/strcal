@@ -105,9 +105,6 @@ namespace strcal{
 				return 1+(a[i]<b[i]);//Return 1 if the current index character of the first string is bigger than the one in the second string, unless, return 2
 		return 0;//Return 0 indicating that both strings are exactly the same
 	}
-	static unsigned char mod10(char n){//Assign a function which finds mod10
-		return n%10<0?10+n%10:n%10;//Return the answer
-	}
 	std::string subtractWhole(std::string x,std::string y){//Assign a function which subtracts a whole number from another as strings
 		if(y=="0")//Return the first string if the second string is "0"
 			return x;
@@ -119,16 +116,18 @@ namespace strcal{
 		char sign=cmpstr(x,y)>1,subtract=0;//Assign the sign indicator (which is 1 (true) if the second string is bigger)
 		if(sign)//Swap both strings if the sign indicator represents true
 			std::swap(x,y);
+#define MOD10(n) (char)(n%10<0?10+n%10:n%10)
 		for(size_t i=x.size();i--;)//Do the subtraction digit by digit
 			if(i<x.size()-y.size())
-				answer.insert(0,1,mod10(x[i]-'0'-subtract)+'0'),subtract=x[i]-'0'-subtract<0;
+				answer.insert(0,1,MOD10(x[i]-'0'-subtract)+'0'),subtract=x[i]-'0'-subtract<0;
 			else
-				answer.insert(0,1,mod10(x[i]-y[i-(x.size()-y.size())]-subtract)+'0'),subtract=x[i]-y[i-(x.size()-y.size())]-subtract<0;
+				answer.insert(0,1,MOD10(x[i]-y[i-(x.size()-y.size())]-subtract)+'0'),subtract=x[i]-y[i-(x.size()-y.size())]-subtract<0;
+#undef MOD10
 		return fixnum(sign?answer.insert(0,1,'-'):answer);//Return the answer in its standard form with the sign back
 	}
 	std::string simpleWholeDivide(std::string x,std::string y,const bool option){//Assign a function which does division between 2 numbers as strings in a simple way (useful if x/y<10)
 		if(y=="0")//Return an empty string if the second string is "0"
-			return "";
+			throw std::runtime_error("Cannot divide by 0.");
 		if(y=="1")//(The second string is "1")
 			return option?"0":x;//Return "0" if the function asks for the remainder, unless, return the first string
 		if(x=="0")//Return "0" if the first string is also "0"
@@ -148,7 +147,7 @@ namespace strcal{
 	}
 	std::string divideWhole(std::string x,std::string y,const bool option){//(Same as the function above with speed improvements (Uses the function above))
 		if(y=="0")//Return an empty string if the second string is "0"
-			return "";
+			throw std::runtime_error("Cannot divide by 0.");
 		if(y=="1")//(The second string is "1")
 			return option?"0":x;//Return "0" if the function asks for the remainder, unless, return the first string
 		if(x=="0")//Return "0" if the first string is also "0"
@@ -167,12 +166,10 @@ namespace strcal{
 	}
 	std::string gcd(std::string x,std::string y){//Assign a function which finds the greatest common divisor between 2 natural numbers as strings using the Euclidean algorithm
 		if(x=="0"||y=="0")//Return an empty string if either one of the strings is "0"
-			return "";
+			throw std::runtime_error("Both numbers to calculate the greatest common divisor from must be natural numbers.");
 		if(x==y)//Return the first string if both strings are equal
 			return x;
 		std::string tmp;//Assign a temporary string
-		while(x.back()<'1'&&y.back()<'1')//Remove the common factor 10 from both strings
-			x.pop_back(),y.pop_back();
 		while(x!="0"&&y!="0")//Find the remainder of both strings until one of them is "0"
 			tmp=divideWhole(x,y,1),y=divideWhole(y,x,1),x=tmp;
 		return x=="0"?y:x;//Return the non-"0" string
@@ -255,12 +252,12 @@ namespace strcal{
 				}
 			case '%'://Find the remainder
 				if(y=="0")//Break out of the switch-case statement if the second string is "0" (which is invalid)
-					break;
+					throw std::runtime_error("Cannot divide by 0.");
 				removeDecimals(x,y);//Turn both strings into integers
 				return returnPoint((y[0]=='-'?"-":"")+((x[0]=='-')^(y[0]=='-')?subtractWhole(absstr(y),divideWhole(absstr(x),absstr(y),1)):divideWhole(absstr(x),absstr(y),1)),divide);//Return the remainder with the floating point back
 			case '/':
 				if(y=="0")//Break out of the switch-case statement if the second string is "0" (which is invalid)
-					break;
+					throw std::runtime_error("Cannot divide by 0.");
 				if(x=="0")//Return "0" if the first string has the same value
 					return "0";
 				if(x==y)//Return "1" if both strings are equal
@@ -297,7 +294,7 @@ namespace strcal{
 				finish:
 				return fixrnum(answer);//Return standard form of the answer
 		}
-		return "";//Return an empty string if the operation is invalid
+		throw std::logic_error("Invalid operator found.");//Return an empty string if the operation is invalid
 	}
 	void rnum2frac(std::string n,std::string &dividend,std::string &divisor){//Assign a function which turns number strings into parts of a fraction
 		if(!strExists(n,"("))//(The number string isn't recursive)
@@ -317,14 +314,14 @@ namespace strcal{
 	}
 	std::string rcalculate(std::string x,std::string y,const char operation){//Assign a function same as `calculate` with recursive number support
 		if(operation!='+'&&operation!='-'&&operation!='*'&&operation!='/'&&operation!='%')//Return an empty string if the operator is invalid
-			return "";
+			throw std::logic_error("Invalid operator found.");
 		if((x=="0"||y=="0")&&(operation=='+'||operation=='-')){//(At least one of the strings is "0" and the operator is either '+' or '-')
 			if(y=="0")//Return the first string if the second string is "0"
 				return x;
 			return(operation=='-'&&y[0]!='-'?"-":"")+absstr(y);//Modify the second string and return it if the first string is "0"
 		}
 		if(y=="0"&&(operation=='/'||operation=='%'))//Return an empty string if the second number string is "0" and the operator is either '/' or '%'
-			return "";
+			throw std::runtime_error("Cannot divide by 0.");
 		if(y=="1"&&(operation=='*'||operation=='/'))//Return the first number string if the second number string is "1" and the operator is either '*' or '/'
 			return x;
 		if(x=="1"&&operation=='*')//Return the second number string if the first number string is "1" and the operator is '*'
