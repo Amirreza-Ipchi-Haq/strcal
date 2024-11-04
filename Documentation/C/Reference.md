@@ -1,5 +1,5 @@
 # The `cstrcal.h` Reference
-In this reference, it is assumed that you've already read the [documentation](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/C/Documentation.md). If not, it is suggested to read it before reading the reference.
+In this reference, it is assumed that you've already read the [Tutorial](https://github.com/Amirreza-Ipchi-Haq/strcal/blob/main/Documentation/C/Tutorial.md). If not, it is suggested to read it before reading the reference.
 ## List of macros & functions
 ### Macros
 |Macro|Description|
