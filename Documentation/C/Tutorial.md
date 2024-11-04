@@ -1,4 +1,4 @@
-# The `cstrcal.h` Documentation
+# The `cstrcal.h` Tutorial
 Before we begin, you should be fimiliar with dynamic memory allocation in C. If not, I suggest you to learn it, unless you would experience problems reading this.
 ## How to create a simple calculator program using `cstrcal.h`
 In order to create a simple calculator program using this library, we can use the following code (Sorry for the bad coding habit):
