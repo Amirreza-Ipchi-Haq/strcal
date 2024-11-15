@@ -10,7 +10,7 @@ char strcal_isWhole(const char* n){//Assign a function which checks if a string 
 	return 1;//Return 1 which indicates as true
 }
 char* strcal_absstr(char* n,const char release){//Assign a function which removes the first '-' if it exists from a string
-	n=n[0]=='-'?dynastr_mltstr(dynastr_strtmp(n+1,0),n,0,release*2+1):dynastr_strtmp(n,release);//Create a copy of the original string without the first '-' if it exists
+	n=n[0]=='-'?dynastr_strnrtmp(n,strlen(n)-1,release):dynastr_strtmp(n,release);//Create a copy of the original string without the first '-' if it exists
 	return n;//Return the result
 }
 char strcal_isnum(char* n){//Assign a function which checks if a string represents a number (standard (like 1) or non-standard (like 01.0))
